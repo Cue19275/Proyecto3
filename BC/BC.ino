@@ -30,6 +30,10 @@
 #define LCD_WR PD_3
 #define LCD_RD PE_1
 int DPINS[] = {PB_0, PB_1, PB_2, PB_3, PB_4, PB_5, PB_6, PB_7};
+uint8_t BO1;
+uint8_t fon;
+
+
 //***************************************************************************************************************************************
 // Functions Prototypes
 //***************************************************************************************************************************************
@@ -60,6 +64,7 @@ void setup() {
   pinMode(LCD_RS, OUTPUT);
   pinMode(LCD_WR, OUTPUT);
   pinMode(LCD_RD, OUTPUT);
+  pinMode(PF_4, INPUT_PULLUP);
 
   for (uint8_t i = 0; i < 8; i++) {
     pinMode(DPINS[i], OUTPUT);
@@ -91,14 +96,23 @@ void setup() {
 
   LCD_Bitmap(0, 0, 320, 240, fondo);
 
+
   delay (5000);
 
   LCD_Clear(0x00);
   FillRect(0, 0, 320, 240, 0x00);
 
-
- 
+  String text5 = "P1";
+  String text6 = "P2";
+  LCD_Bitmap(50, 4, 83, 8, life1);
+  LCD_Bitmap(150, 4, 60, 8, life2);
+  LCD_Bitmap(215, 4, 36, 8, life3);
+  LCD_Bitmap(255, 4, 16, 8, life4);
+  LCD_Print(text5, 48, 4, 1, 0xffff, 0x00);
   
+  
+
+
   //fila de abajo
   LCD_Bitmap(0, 224, 16, 16, tile);
   LCD_Bitmap(16, 224, 16, 16, tile);
@@ -122,65 +136,64 @@ void setup() {
   LCD_Bitmap(304, 224, 16, 16, tile);
   //
   //fila arriba
-  LCD_Bitmap(0,16,16,16, tile);
-  LCD_Bitmap(16,16,16,16, tile);
-  LCD_Bitmap(32,16,16,16, tile);
-  LCD_Bitmap(48,16,16,16, tile);
-  LCD_Bitmap(64,16,16,16, tile);
-  LCD_Bitmap(80,16,16,16, tile);
-  LCD_Bitmap(96,16,16,16, tile);
-  LCD_Bitmap(112,16,16,16, tile);
-  LCD_Bitmap(128,16,16,16, tile);
-  LCD_Bitmap(144,16,16,16, tile);
-  LCD_Bitmap(160,16,16,16, tile);
-  LCD_Bitmap(176,16,16,16, tile);
-  LCD_Bitmap(192,16,16,16, tile);
-  LCD_Bitmap(208,16,16,16, tile);
-  LCD_Bitmap(224,16,16,16, tile);
-  LCD_Bitmap(240,16,16,16, tile);
-  LCD_Bitmap(256,16,16,16, tile);
-  LCD_Bitmap(272,16,16,16, tile);
-  LCD_Bitmap(288,16,16,16, tile);
-  LCD_Bitmap(304,16,16,16, tile);
-  
-  
+  LCD_Bitmap(0, 16, 16, 16, tile);
+  LCD_Bitmap(16, 16, 16, 16, tile);
+  LCD_Bitmap(32, 16, 16, 16, tile);
+  LCD_Bitmap(48, 16, 16, 16, tile);
+  LCD_Bitmap(64, 16, 16, 16, tile);
+  LCD_Bitmap(80, 16, 16, 16, tile);
+  LCD_Bitmap(96, 16, 16, 16, tile);
+  LCD_Bitmap(112, 16, 16, 16, tile);
+  LCD_Bitmap(128, 16, 16, 16, tile);
+  LCD_Bitmap(144, 16, 16, 16, tile);
+  LCD_Bitmap(160, 16, 16, 16, tile);
+  LCD_Bitmap(176, 16, 16, 16, tile);
+  LCD_Bitmap(192, 16, 16, 16, tile);
+  LCD_Bitmap(208, 16, 16, 16, tile);
+  LCD_Bitmap(224, 16, 16, 16, tile);
+  LCD_Bitmap(240, 16, 16, 16, tile);
+  LCD_Bitmap(256, 16, 16, 16, tile);
+  LCD_Bitmap(272, 16, 16, 16, tile);
+  LCD_Bitmap(288, 16, 16, 16, tile);
+  LCD_Bitmap(304, 16, 16, 16, tile);
+
+
   //columna izq
-  LCD_Bitmap(0,16,16,16, tile);
-  LCD_Bitmap(0,32,16,16, tile);
-  LCD_Bitmap(0,48,16,16, tile);
-  LCD_Bitmap(0,64,16,16, tile);
-  LCD_Bitmap(0,80,16,16, tile);
-  LCD_Bitmap(0,96,16,16, tile);
-  LCD_Bitmap(0,112,16,16, tile);
-  LCD_Bitmap(0,128,16,16, tile);
-  LCD_Bitmap(0,144,16,16, tile);
-  LCD_Bitmap(0,160,16,16, tile);
-  LCD_Bitmap(0,176,16,16, tile);
-  LCD_Bitmap(0,192,16,16, tile);
-  LCD_Bitmap(0,208,16,16, tile);
-  
+  LCD_Bitmap(0, 16, 16, 16, tile);
+  LCD_Bitmap(0, 32, 16, 16, tile);
+  LCD_Bitmap(0, 48, 16, 16, tile);
+  LCD_Bitmap(0, 64, 16, 16, tile);
+  LCD_Bitmap(0, 80, 16, 16, tile);
+  LCD_Bitmap(0, 96, 16, 16, tile);
+  LCD_Bitmap(0, 112, 16, 16, tile);
+  LCD_Bitmap(0, 128, 16, 16, tile);
+  LCD_Bitmap(0, 144, 16, 16, tile);
+  LCD_Bitmap(0, 160, 16, 16, tile);
+  LCD_Bitmap(0, 176, 16, 16, tile);
+  LCD_Bitmap(0, 192, 16, 16, tile);
+  LCD_Bitmap(0, 208, 16, 16, tile);
+
   //columna derecha
-  LCD_Bitmap(304,16,16,16, tile);
-  LCD_Bitmap(304,32,16,16, tile);
-  LCD_Bitmap(304,48,16,16, tile);
-  LCD_Bitmap(304,64,16,16, tile);
-  LCD_Bitmap(304,80,16,16, tile);
-  LCD_Bitmap(304,96,16,16, tile);
-  LCD_Bitmap(304,112,16,16, tile);
-  LCD_Bitmap(304,128,16,16, tile);
-  LCD_Bitmap(304,144,16,16, tile);
-  LCD_Bitmap(304,160,16,16, tile);
-  LCD_Bitmap(304,176,16,16, tile);
-  LCD_Bitmap(304,192,16,16, tile);
-  LCD_Bitmap(304,208,16,16, tile);
+  LCD_Bitmap(304, 16, 16, 16, tile);
+  LCD_Bitmap(304, 32, 16, 16, tile);
+  LCD_Bitmap(304, 48, 16, 16, tile);
+  LCD_Bitmap(304, 64, 16, 16, tile);
+  LCD_Bitmap(304, 80, 16, 16, tile);
+  LCD_Bitmap(304, 96, 16, 16, tile);
+  LCD_Bitmap(304, 112, 16, 16, tile);
+  LCD_Bitmap(304, 128, 16, 16, tile);
+  LCD_Bitmap(304, 144, 16, 16, tile);
+  LCD_Bitmap(304, 160, 16, 16, tile);
+  LCD_Bitmap(304, 176, 16, 16, tile);
+  LCD_Bitmap(304, 192, 16, 16, tile);
+  LCD_Bitmap(304, 208, 16, 16, tile);
 
 
 
 
-  String text = "prueba";
 
-  //text, x, y ,tamaño de font, color, background
-  LCD_Print(text1, 1, 0, 1, 0xffff, 0x00);
+
+
   //LCD_Sprite(int x, int y, int width, int height, unsigned char bitmap[],int columns, int index, char flip, char offset);
 
   //LCD_Bitmap(unsigned int x, unsigned int y, unsigned int width, unsigned int height, unsigned char bitmap[]);
@@ -200,52 +213,54 @@ void setup() {
 // Loop Infinito
 //***************************************************************************************************************************************
 void loop() {
-  //  for(int x = 0; x <320-32; x++){
-  //    delay(15);
-  //    int anim2 = (x/35)%2;
-  //
-  //    LCD_Sprite(x,100,16,24,planta,2,anim2,0,1);
-  //    V_line( x -1, 100, 24, 0x421b);
-  //
-  //    //LCD_Bitmap(x, 100, 32, 32, prueba);
-  //
-  //    int anim = (x/11)%8;
-  //
-  //
-  //    int anim3 = (x/11)%4;
-  //
-  //    LCD_Sprite(x, 20, 16, 32, mario,8, anim,1, 0);
-  //    V_line( x -1, 20, 32, 0x421b);
-  //
-  //    //LCD_Sprite(x,100,32,32,bowser,4,anim3,0,1);
-  //    //V_line( x -1, 100, 32, 0x421b);
-  //
-  //
-  //    LCD_Sprite(x, 140, 16, 16, enemy,2, anim2,1, 0);
-  //    V_line( x -1, 140, 16, 0x421b);
-  //
-  //    LCD_Sprite(x, 175, 16, 32, luigi,8, anim,1, 0);
-  //    V_line( x -1, 175, 32, 0x421b);
-  //  }
-  //  for(int x = 320-32; x >0; x--){
-  //    delay(5);
-  //    int anim = (x/11)%8;
-  //    int anim2 = (x/11)%2;
-  //
-  //    LCD_Sprite(x,100,16,24,planta,2,anim2,0,0);
-  //    V_line( x + 16, 100, 24, 0x421b);
-  //
-  //LCD_Bitmap(x, 100, 32, 32, prueba);
-
-  //LCD_Sprite(x, 140, 16, 16, enemy,2, anim2,0, 0);
-  //V_line( x + 16, 140, 16, 0x421b);
-
-  //LCD_Sprite(x, 175, 16, 32, luigi,8, anim,0, 0);
-  //V_line( x + 16, 175, 32, 0x421b);
-
-  //LCD_Sprite(x, 20, 16, 32, mario,8, anim,0, 0);
-  //V_line( x + 16, 20, 32, 0x421b);
 }
+
+//  for(int x = 0; x <320-32; x++){
+//    delay(15);
+//    int anim2 = (x/35)%2;
+//
+//    LCD_Sprite(x,100,16,24,planta,2,anim2,0,1);
+//    V_line( x -1, 100, 24, 0x421b);
+//
+//    //LCD_Bitmap(x, 100, 32, 32, prueba);
+//
+//    int anim = (x/11)%8;
+//
+//
+//    int anim3 = (x/11)%4;
+//
+//    LCD_Sprite(x, 20, 16, 32, mario,8, anim,1, 0);
+//    V_line( x -1, 20, 32, 0x421b);
+//
+//    //LCD_Sprite(x,100,32,32,bowser,4,anim3,0,1);
+//    //V_line( x -1, 100, 32, 0x421b);
+//
+//
+//    LCD_Sprite(x, 140, 16, 16, enemy,2, anim2,1, 0);
+//    V_line( x -1, 140, 16, 0x421b);
+//
+//    LCD_Sprite(x, 175, 16, 32, luigi,8, anim,1, 0);
+//    V_line( x -1, 175, 32, 0x421b);
+//  }
+//  for(int x = 320-32; x >0; x--){
+//    delay(5);
+//    int anim = (x/11)%8;
+//    int anim2 = (x/11)%2;
+//
+//    LCD_Sprite(x,100,16,24,planta,2,anim2,0,0);
+//    V_line( x + 16, 100, 24, 0x421b);
+//
+//LCD_Bitmap(x, 100, 32, 32, prueba);
+
+//LCD_Sprite(x, 140, 16, 16, enemy,2, anim2,0, 0);
+//V_line( x + 16, 140, 16, 0x421b);
+
+//LCD_Sprite(x, 175, 16, 32, luigi,8, anim,0, 0);
+//V_line( x + 16, 175, 32, 0x421b);
+
+//LCD_Sprite(x, 20, 16, 32, mario,8, anim,0, 0);
+//V_line( x + 16, 20, 32, 0x421b);
+
 //***************************************************************************************************************************************
 // Función para inicializar LCD
 //***************************************************************************************************************************************
@@ -572,3 +587,12 @@ void LCD_Sprite(int x, int y, int width, int height, unsigned char bitmap[], int
   }
   digitalWrite(LCD_CS, HIGH);
 }
+
+
+
+
+
+//  String text = "prueba";
+//
+//  //text, x, y ,tamaño de font, color, background
+//  LCD_Print(text, 1, 0, 1, 0xffff, 0x00);}
