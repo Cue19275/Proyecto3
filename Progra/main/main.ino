@@ -33,7 +33,20 @@ int DPINS[] = {PB_0, PB_1, PB_2, PB_3, PB_4, PB_5, PB_6, PB_7};
 int entrada;
 int x_t1;
 int y_t1;
+int x_b1;
+int y_b1;
+
+const int y_limsup = 84;
+const int y_liminf = 176;
+const int x_limsup = 300;
+const int x_liminf = 20;
+
 int flag_orient;
+int disparo_vertU;
+int disparo_vertA;
+int disparo_horI;
+int disparo_horD;
+int disparo_activo;
 
 //***************************************************************************************************************************************
 // Functions Prototypes
@@ -76,9 +89,14 @@ void setup() {
   FillRect(0, 0, 320, 240, 0x0);
   x_t1 = 80;
   y_t1 = 100;
+  disparo_vertU=0;
+  disparo_vertA=0;
+  disparo_horI=0;
+  disparo_horD=0;
+  disparo_activo=0;
   flag_orient = 0;
   LCD_Bitmap(x_t1, y_t1, 15, 17, tanque2_1);
-  FillRect(110, 110, 16, 16, 0xFF);
+  LCD_Bitmap(100, 110, 10, 8, balazo);
  /* LCD_Bitmap(30, 10, 17, 15, tanque2_2);
   LCD_Bitmap(60, 10, 17, 15, tanque2_3);
   LCD_Bitmap(80, 10, 15, 17, tanque2_4);
@@ -114,7 +132,7 @@ void loop() {
     if(entrada == 48 && flag_orient == 0){
       FillRect(x_t1, y_t1, 15, 17, 0);
       y_t1-=5;
-      if(y_t1<=84){
+      if(y_t1<=y_limsup){
        y_t1+=5; 
        LCD_Bitmap(x_t1, y_t1, 15, 17, tanque2_1);
       }
@@ -125,7 +143,7 @@ void loop() {
     else if(entrada == 48 && flag_orient == 1){
       FillRect(x_t1, y_t1, 17, 15, 0);
       x_t1+=5;
-      if(x_t1>=300){
+      if(x_t1>=x_limsup){
         x_t1-=5;
         LCD_Bitmap(x_t1, y_t1, 17, 15, tanque2_2);
       }
@@ -136,7 +154,7 @@ void loop() {
     else if(entrada == 48 && flag_orient == 2){
       FillRect(x_t1, y_t1, 17, 15, 0);
       x_t1-=5;
-      if(x_t1<=20){
+      if(x_t1<=x_liminf){
         x_t1+=5;
         LCD_Bitmap(x_t1, y_t1, 17, 15, tanque2_3);
       }
@@ -147,7 +165,7 @@ void loop() {
     else if(entrada == 48 && flag_orient == 3){
       FillRect(x_t1, y_t1, 15, 17, 0);
       y_t1+=5;
-      if(y_t1>=176){
+      if(y_t1>=y_liminf){
         y_t1-=5;
         LCD_Bitmap(x_t1, y_t1, 15, 17, tanque2_4);
       }
@@ -177,11 +195,62 @@ void loop() {
       flag_orient = 3;
     }
     //***********************Disparo***************************************
-    /*if (entrada == 5){
-      switch (flag_orient){
-        case 
+    if((entrada ==53 )&&((flag_orient == 0)&&(disparo_activo == 0))){
+      disparo_vertU = 1;
+      disparo_vertA = 0;
+      disparo_horI = 0;
+      disparo_horD = 0;
+      
+      if((y_t1-12)>=y_limsup){
+       disparo_activo=1;
+       LCD_Bitmap((x_t1+4), (y_t1-12), 8, 10, balazo_v);
+       x_b1 = x_t1+4;
+       y_b1 = y_t1-12;
       }
-    }*/
+      else{
+        disparo_activo=0;
+      }
+    }
+    else if((entrada ==53 )&&((flag_orient == 1)&&(disparo_activo == 0))){
+      disparo_vertU = 0;
+      disparo_vertA = 1;
+      disparo_horI = 0;
+      disparo_horD = 0;
+      disparo_activo=1;
+      LCD_Bitmap((x_t1+19), (y_t1+4), 10, 8, balazo);
+    }
+    else if((entrada ==53 )&&((flag_orient == 2)&&(disparo_activo == 0))){
+      disparo_vertU = 0;
+      disparo_vertA = 0;
+      disparo_horI = 1;
+      disparo_horD = 0;
+      disparo_activo=1;
+      LCD_Bitmap((x_t1-12), (y_t1+4), 10, 8, balazo);
+    }
+    else if((entrada ==53 )&&((flag_orient == 3)&&(disparo_activo == 0))){
+      disparo_vertU = 0;
+      disparo_vertA = 0;
+      disparo_horI = 0;
+      disparo_horD = 1;
+      disparo_activo=1;
+      LCD_Bitmap((x_t1+4), (y_t1+17), 8, 10, balazo_v);
+    }
+    //------->Avance Disparo
+    if((disparo_activo == 1)&&(disparo_vertU==1)){
+      FillRect(x_b1, y_b1, 8, 10, 0);
+      y_b1-=5;
+      if(y_b1>=y_limsup){
+        
+        
+        LCD_Bitmap((x_b1), (y_b1), 8, 10, balazo_v);
+        delay(100);
+      }
+      else{
+        disparo_activo=0;
+      }
+      
+    }
+
     
   }
   
