@@ -36,10 +36,10 @@ int y_t1;
 int x_b1;
 int y_b1;
 
-const int y_limsup = 84;
-const int y_liminf = 176;
-const int x_limsup = 300;
-const int x_liminf = 20;
+const int y_limsup = 32;
+const int y_liminf = 224;
+const int x_limsup = 287;
+const int x_liminf = 16;
 
 int flag_orient;
 int disparo_vertU;
@@ -47,7 +47,7 @@ int disparo_vertA;
 int disparo_horI;
 int disparo_horD;
 int disparo_activo;
-int DPINS[] = {PB_0, PB_1, PB_2, PB_3, PB_4, PB_5, PB_6, PB_7};
+
 uint8_t BO1;
 uint8_t fon;
 uint8_t FLAG;
@@ -66,9 +66,9 @@ void V_line(unsigned int x, unsigned int y, unsigned int l, unsigned int c);
 void Rect(unsigned int x, unsigned int y, unsigned int w, unsigned int h, unsigned int c);
 void FillRect(unsigned int x, unsigned int y, unsigned int w, unsigned int h, unsigned int c);
 void LCD_Print(String text, int x, int y, int fontSize, int color, int background);
-
 void LCD_Bitmap(unsigned int x, unsigned int y, unsigned int width, unsigned int height, unsigned char bitmap[]);
 void LCD_Sprite(int x, int y, int width, int height, unsigned char bitmap[],int columns, int index, char flip, char offset);
+void pista(void);
 //Indice de la imagen, 0, 0
 
 extern uint8_t fondo[];
@@ -80,12 +80,14 @@ void setup() {
   SysCtlClockSet(SYSCTL_SYSDIV_2_5|SYSCTL_USE_PLL|SYSCTL_OSC_MAIN|SYSCTL_XTAL_16MHZ);
   Serial.begin(9600);
   GPIOPadConfigSet(GPIO_PORTB_BASE, 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7, GPIO_STRENGTH_8MA, GPIO_PIN_TYPE_STD_WPU);
+  pinMode(PF_4, INPUT_PULLUP);
+
   Serial.println("Inicio");
   LCD_Init();
   LCD_Clear(0x00);
   //x1,y1,x2,y2
   FillRect(0, 0, 319, 206, 0x00);
-
+  
   String text1 = "MONSTRU INC.";
   String text2 = "&";
   String text3 = "CUE CORP.";
@@ -118,7 +120,6 @@ void setup() {
   //LCD_Sprite(int x, int y, int width, int height, unsigned char bitmap[],int columns, int index, char flip, char offset);
 
   //LCD_Bitmap(unsigned int x, unsigned int y, unsigned int width, unsigned int height, unsigned char bitmap[]);
-  FillRect(0, 0, 320, 240, 0x0);
   x_t1 = 80;
   y_t1 = 100;
   disparo_vertU=0;
@@ -127,14 +128,14 @@ void setup() {
   disparo_horD=0;
   disparo_activo=0;
   flag_orient = 0;
-  LCD_Bitmap(x_t1, y_t1, 15, 17, tanque2_1);
+  /*LCD_Bitmap(x_t1, y_t1, 15, 17, tanque2_1);
   LCD_Bitmap(100, 110, 10, 8, balazo);
  /* LCD_Bitmap(30, 10, 17, 15, tanque2_2);
   LCD_Bitmap(60, 10, 17, 15, tanque2_3);
   LCD_Bitmap(80, 10, 15, 17, tanque2_4);
   LCD_Bitmap(97, 10, 10, 8, misil1);*/
 
-
+/*
   for(int x = 0; x <319; x++){
     LCD_Bitmap(x, 52, 16, 16, tile2);
     LCD_Bitmap(x, 68, 16, 16, tile);
@@ -142,7 +143,7 @@ void setup() {
     LCD_Bitmap(x, 207, 16, 16, tile);
     LCD_Bitmap(x, 223, 16, 16, tile);
     x += 15;
- }
+ }*/
 
 }
 //***************************************************************************************************************************************
@@ -158,10 +159,9 @@ void loop() {
     if (fon == 1 && BO1 == HIGH) {
       fon = 0;
       pista();
-
     }
   }
-}
+
 
   /*for (int x = 0; x<6; x++){
     if(x == 6){
@@ -707,10 +707,10 @@ void pista(void) {
 
   String text5 = "P1";
   String text6 = "P2";
-  LCD_Bitmap(50, 4, 83, 8, life1);
-  LCD_Bitmap(150, 4, 60, 8, life2);
-  LCD_Bitmap(215, 4, 36, 8, life3);
-  LCD_Bitmap(255, 4, 16, 8, life4);
+  //LCD_Bitmap(50, 4, 83, 8, life1);
+  //LCD_Bitmap(150, 4, 60, 8, life2);
+  //LCD_Bitmap(215, 4, 36, 8, life3);
+  //LCD_Bitmap(255, 4, 16, 8, life4);
   LCD_Print(text5, 48, 4, 1, 0xffff, 0x00);
 
 
@@ -791,7 +791,23 @@ void pista(void) {
   LCD_Bitmap(304, 192, 16, 16, tile);
   LCD_Bitmap(304, 208, 16, 16, tile);
 
+  LCD_Bitmap(x_t1, y_t1, 15, 17, tanque2_1);
+  LCD_Bitmap(100, 110, 10, 8, balazo);
+ /* LCD_Bitmap(30, 10, 17, 15, tanque2_2);
+  LCD_Bitmap(60, 10, 17, 15, tanque2_3);
+  LCD_Bitmap(80, 10, 15, 17, tanque2_4);
+  LCD_Bitmap(97, 10, 10, 8, misil1);*/
 
+/*
+  for(int x = 0; x <319; x++){
+    LCD_Bitmap(x, 52, 16, 16, tile2);
+    LCD_Bitmap(x, 68, 16, 16, tile);
+
+    LCD_Bitmap(x, 207, 16, 16, tile);
+    LCD_Bitmap(x, 223, 16, 16, tile);
+    x += 15;
+    
+ }*/
 }
 
 
