@@ -32,6 +32,7 @@
 int DPINS[] = {PB_0, PB_1, PB_2, PB_3, PB_4, PB_5, PB_6, PB_7};
 uint8_t BO1;
 uint8_t fon;
+uint8_t FLAG;
 
 
 //***************************************************************************************************************************************
@@ -96,97 +97,8 @@ void setup() {
 
   LCD_Bitmap(0, 0, 320, 240, fondo);
 
+  FLAG = 1;
 
-  delay (5000);
-
-  LCD_Clear(0x00);
-  FillRect(0, 0, 320, 240, 0x00);
-
-  String text5 = "P1";
-  String text6 = "P2";
-  LCD_Bitmap(50, 4, 83, 8, life1);
-  LCD_Bitmap(150, 4, 60, 8, life2);
-  LCD_Bitmap(215, 4, 36, 8, life3);
-  LCD_Bitmap(255, 4, 16, 8, life4);
-  LCD_Print(text5, 48, 4, 1, 0xffff, 0x00);
-  
-  
-
-
-  //fila de abajo
-  LCD_Bitmap(0, 224, 16, 16, tile);
-  LCD_Bitmap(16, 224, 16, 16, tile);
-  LCD_Bitmap(32, 224, 16, 16, tile);
-  LCD_Bitmap(48, 224, 16, 16, tile);
-  LCD_Bitmap(64, 224, 16, 16, tile);
-  LCD_Bitmap(80, 224, 16, 16, tile);
-  LCD_Bitmap(96, 224, 16, 16, tile);
-  LCD_Bitmap(112, 224, 16, 16, tile);
-  LCD_Bitmap(128, 224, 16, 16, tile);
-  LCD_Bitmap(144, 224, 16, 16, tile);
-  LCD_Bitmap(160, 224, 16, 16, tile);
-  LCD_Bitmap(176, 224, 16, 16, tile);
-  LCD_Bitmap(192, 224, 16, 16, tile);
-  LCD_Bitmap(208, 224, 16, 16, tile);
-  LCD_Bitmap(224, 224, 16, 16, tile);
-  LCD_Bitmap(240, 224, 16, 16, tile);
-  LCD_Bitmap(256, 224, 16, 16, tile);
-  LCD_Bitmap(272, 224, 16, 16, tile);
-  LCD_Bitmap(288, 224, 16, 16, tile);
-  LCD_Bitmap(304, 224, 16, 16, tile);
-  //
-  //fila arriba
-  LCD_Bitmap(0, 16, 16, 16, tile);
-  LCD_Bitmap(16, 16, 16, 16, tile);
-  LCD_Bitmap(32, 16, 16, 16, tile);
-  LCD_Bitmap(48, 16, 16, 16, tile);
-  LCD_Bitmap(64, 16, 16, 16, tile);
-  LCD_Bitmap(80, 16, 16, 16, tile);
-  LCD_Bitmap(96, 16, 16, 16, tile);
-  LCD_Bitmap(112, 16, 16, 16, tile);
-  LCD_Bitmap(128, 16, 16, 16, tile);
-  LCD_Bitmap(144, 16, 16, 16, tile);
-  LCD_Bitmap(160, 16, 16, 16, tile);
-  LCD_Bitmap(176, 16, 16, 16, tile);
-  LCD_Bitmap(192, 16, 16, 16, tile);
-  LCD_Bitmap(208, 16, 16, 16, tile);
-  LCD_Bitmap(224, 16, 16, 16, tile);
-  LCD_Bitmap(240, 16, 16, 16, tile);
-  LCD_Bitmap(256, 16, 16, 16, tile);
-  LCD_Bitmap(272, 16, 16, 16, tile);
-  LCD_Bitmap(288, 16, 16, 16, tile);
-  LCD_Bitmap(304, 16, 16, 16, tile);
-
-
-  //columna izq
-  LCD_Bitmap(0, 16, 16, 16, tile);
-  LCD_Bitmap(0, 32, 16, 16, tile);
-  LCD_Bitmap(0, 48, 16, 16, tile);
-  LCD_Bitmap(0, 64, 16, 16, tile);
-  LCD_Bitmap(0, 80, 16, 16, tile);
-  LCD_Bitmap(0, 96, 16, 16, tile);
-  LCD_Bitmap(0, 112, 16, 16, tile);
-  LCD_Bitmap(0, 128, 16, 16, tile);
-  LCD_Bitmap(0, 144, 16, 16, tile);
-  LCD_Bitmap(0, 160, 16, 16, tile);
-  LCD_Bitmap(0, 176, 16, 16, tile);
-  LCD_Bitmap(0, 192, 16, 16, tile);
-  LCD_Bitmap(0, 208, 16, 16, tile);
-
-  //columna derecha
-  LCD_Bitmap(304, 16, 16, 16, tile);
-  LCD_Bitmap(304, 32, 16, 16, tile);
-  LCD_Bitmap(304, 48, 16, 16, tile);
-  LCD_Bitmap(304, 64, 16, 16, tile);
-  LCD_Bitmap(304, 80, 16, 16, tile);
-  LCD_Bitmap(304, 96, 16, 16, tile);
-  LCD_Bitmap(304, 112, 16, 16, tile);
-  LCD_Bitmap(304, 128, 16, 16, tile);
-  LCD_Bitmap(304, 144, 16, 16, tile);
-  LCD_Bitmap(304, 160, 16, 16, tile);
-  LCD_Bitmap(304, 176, 16, 16, tile);
-  LCD_Bitmap(304, 192, 16, 16, tile);
-  LCD_Bitmap(304, 208, 16, 16, tile);
 
 
 
@@ -213,6 +125,18 @@ void setup() {
 // Loop Infinito
 //***************************************************************************************************************************************
 void loop() {
+
+  BO1 = digitalRead(PF_4);
+  if (FLAG == 1) {
+    if (BO1 == LOW) {
+      fon = 1;
+    }
+    if (fon == 1 && BO1 == HIGH) {
+      fon = 0;
+      pista();
+      
+    }
+  }
 }
 
 //  for(int x = 0; x <320-32; x++){
@@ -589,7 +513,100 @@ void LCD_Sprite(int x, int y, int width, int height, unsigned char bitmap[], int
 }
 
 
+void pista(void) {
 
+
+  LCD_Clear(0x00);
+  FillRect(0, 0, 320, 240, 0x00);
+
+  String text5 = "P1";
+  String text6 = "P2";
+  LCD_Bitmap(50, 4, 83, 8, life1);
+  LCD_Bitmap(150, 4, 60, 8, life2);
+  LCD_Bitmap(215, 4, 36, 8, life3);
+  LCD_Bitmap(255, 4, 16, 8, life4);
+  LCD_Print(text5, 48, 4, 1, 0xffff, 0x00);
+
+
+
+
+  //fila de abajo
+  LCD_Bitmap(0, 224, 16, 16, tile);
+  LCD_Bitmap(16, 224, 16, 16, tile);
+  LCD_Bitmap(32, 224, 16, 16, tile);
+  LCD_Bitmap(48, 224, 16, 16, tile);
+  LCD_Bitmap(64, 224, 16, 16, tile);
+  LCD_Bitmap(80, 224, 16, 16, tile);
+  LCD_Bitmap(96, 224, 16, 16, tile);
+  LCD_Bitmap(112, 224, 16, 16, tile);
+  LCD_Bitmap(128, 224, 16, 16, tile);
+  LCD_Bitmap(144, 224, 16, 16, tile);
+  LCD_Bitmap(160, 224, 16, 16, tile);
+  LCD_Bitmap(176, 224, 16, 16, tile);
+  LCD_Bitmap(192, 224, 16, 16, tile);
+  LCD_Bitmap(208, 224, 16, 16, tile);
+  LCD_Bitmap(224, 224, 16, 16, tile);
+  LCD_Bitmap(240, 224, 16, 16, tile);
+  LCD_Bitmap(256, 224, 16, 16, tile);
+  LCD_Bitmap(272, 224, 16, 16, tile);
+  LCD_Bitmap(288, 224, 16, 16, tile);
+  LCD_Bitmap(304, 224, 16, 16, tile);
+  //
+  //fila arriba
+  LCD_Bitmap(0, 16, 16, 16, tile);
+  LCD_Bitmap(16, 16, 16, 16, tile);
+  LCD_Bitmap(32, 16, 16, 16, tile);
+  LCD_Bitmap(48, 16, 16, 16, tile);
+  LCD_Bitmap(64, 16, 16, 16, tile);
+  LCD_Bitmap(80, 16, 16, 16, tile);
+  LCD_Bitmap(96, 16, 16, 16, tile);
+  LCD_Bitmap(112, 16, 16, 16, tile);
+  LCD_Bitmap(128, 16, 16, 16, tile);
+  LCD_Bitmap(144, 16, 16, 16, tile);
+  LCD_Bitmap(160, 16, 16, 16, tile);
+  LCD_Bitmap(176, 16, 16, 16, tile);
+  LCD_Bitmap(192, 16, 16, 16, tile);
+  LCD_Bitmap(208, 16, 16, 16, tile);
+  LCD_Bitmap(224, 16, 16, 16, tile);
+  LCD_Bitmap(240, 16, 16, 16, tile);
+  LCD_Bitmap(256, 16, 16, 16, tile);
+  LCD_Bitmap(272, 16, 16, 16, tile);
+  LCD_Bitmap(288, 16, 16, 16, tile);
+  LCD_Bitmap(304, 16, 16, 16, tile);
+
+
+  //columna izq
+  LCD_Bitmap(0, 16, 16, 16, tile);
+  LCD_Bitmap(0, 32, 16, 16, tile);
+  LCD_Bitmap(0, 48, 16, 16, tile);
+  LCD_Bitmap(0, 64, 16, 16, tile);
+  LCD_Bitmap(0, 80, 16, 16, tile);
+  LCD_Bitmap(0, 96, 16, 16, tile);
+  LCD_Bitmap(0, 112, 16, 16, tile);
+  LCD_Bitmap(0, 128, 16, 16, tile);
+  LCD_Bitmap(0, 144, 16, 16, tile);
+  LCD_Bitmap(0, 160, 16, 16, tile);
+  LCD_Bitmap(0, 176, 16, 16, tile);
+  LCD_Bitmap(0, 192, 16, 16, tile);
+  LCD_Bitmap(0, 208, 16, 16, tile);
+
+  //columna derecha
+  LCD_Bitmap(304, 16, 16, 16, tile);
+  LCD_Bitmap(304, 32, 16, 16, tile);
+  LCD_Bitmap(304, 48, 16, 16, tile);
+  LCD_Bitmap(304, 64, 16, 16, tile);
+  LCD_Bitmap(304, 80, 16, 16, tile);
+  LCD_Bitmap(304, 96, 16, 16, tile);
+  LCD_Bitmap(304, 112, 16, 16, tile);
+  LCD_Bitmap(304, 128, 16, 16, tile);
+  LCD_Bitmap(304, 144, 16, 16, tile);
+  LCD_Bitmap(304, 160, 16, 16, tile);
+  LCD_Bitmap(304, 176, 16, 16, tile);
+  LCD_Bitmap(304, 192, 16, 16, tile);
+  LCD_Bitmap(304, 208, 16, 16, tile);
+
+
+}
 
 
 //  String text = "prueba";
