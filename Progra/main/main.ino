@@ -30,6 +30,11 @@
 #define LCD_WR PD_3
 #define LCD_RD PE_1
 int DPINS[] = {PB_0, PB_1, PB_2, PB_3, PB_4, PB_5, PB_6, PB_7};  
+int entrada;
+int x_t1;
+int y_t1;
+int flag_orient;
+
 //***************************************************************************************************************************************
 // Functions Prototypes
 //***************************************************************************************************************************************
@@ -53,6 +58,7 @@ extern uint8_t fondo[];
 // Inicialización
 //***************************************************************************************************************************************
 void setup() {
+  Serial3.begin(9600);
   SysCtlClockSet(SYSCTL_SYSDIV_2_5|SYSCTL_USE_PLL|SYSCTL_OSC_MAIN|SYSCTL_XTAL_16MHZ);
   Serial.begin(9600);
   GPIOPadConfigSet(GPIO_PORTB_BASE, 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7, GPIO_STRENGTH_8MA, GPIO_PIN_TYPE_STD_WPU);
@@ -67,13 +73,16 @@ void setup() {
 //LCD_Sprite(int x, int y, int width, int height, unsigned char bitmap[],int columns, int index, char flip, char offset);
     
   //LCD_Bitmap(unsigned int x, unsigned int y, unsigned int width, unsigned int height, unsigned char bitmap[]);
-  FillRect(0, 0, 319, 206, 0x0);
-  
-  LCD_Bitmap(10, 10, 15, 17, tanque2_1);
-  LCD_Bitmap(30, 10, 17, 15, tanque2_2);
+  FillRect(0, 0, 320, 240, 0x0);
+  x_t1 = 80;
+  y_t1 = 100;
+  flag_orient = 0;
+  LCD_Bitmap(x_t1, y_t1, 15, 17, tanque2_1);
+  FillRect(110, 110, 16, 16, 0xFF);
+ /* LCD_Bitmap(30, 10, 17, 15, tanque2_2);
   LCD_Bitmap(60, 10, 17, 15, tanque2_3);
   LCD_Bitmap(80, 10, 15, 17, tanque2_4);
-  LCD_Bitmap(97, 10, 10, 8, misil1);
+  LCD_Bitmap(97, 10, 10, 8, misil1);*/
   
   
   for(int x = 0; x <319; x++){
@@ -91,13 +100,89 @@ void setup() {
 //***************************************************************************************************************************************
 void loop() {
 
-  for (int x = 0; x<6; x++){
+  /*for (int x = 0; x<6; x++){
     if(x == 6){
       x = 0;
+      delay(100);
     }
-    LCD_Sprite(30, 30, 17, 17, explo, 6, x, 0, 0);
+    LCD_Sprite(30, 30, 17, 17, explo, 6, x, 0, 0);*/
+
+    if(Serial.available()){
+      entrada = Serial.read();
+    }
+    //***********************Movimiento***************************************
+    if(entrada == 48 && flag_orient == 0){
+      FillRect(x_t1, y_t1, 15, 17, 0);
+      y_t1-=5;
+      if(y_t1<=84){
+       y_t1+=5; 
+       LCD_Bitmap(x_t1, y_t1, 15, 17, tanque2_1);
+      }
+      else{
+      LCD_Bitmap(x_t1, y_t1, 15, 17, tanque2_1);
+      }
+    }
+    else if(entrada == 48 && flag_orient == 1){
+      FillRect(x_t1, y_t1, 17, 15, 0);
+      x_t1+=5;
+      if(x_t1>=300){
+        x_t1-=5;
+        LCD_Bitmap(x_t1, y_t1, 17, 15, tanque2_2);
+      }
+      else{
+      LCD_Bitmap(x_t1, y_t1, 17, 15, tanque2_2);
+      }
+    }
+    else if(entrada == 48 && flag_orient == 2){
+      FillRect(x_t1, y_t1, 17, 15, 0);
+      x_t1-=5;
+      if(x_t1<=20){
+        x_t1+=5;
+        LCD_Bitmap(x_t1, y_t1, 17, 15, tanque2_3);
+      }
+      else{
+      LCD_Bitmap(x_t1, y_t1, 17, 15, tanque2_3);
+      }
+    }
+    else if(entrada == 48 && flag_orient == 3){
+      FillRect(x_t1, y_t1, 15, 17, 0);
+      y_t1+=5;
+      if(y_t1>=176){
+        y_t1-=5;
+        LCD_Bitmap(x_t1, y_t1, 15, 17, tanque2_4);
+      }
+      else{
+      LCD_Bitmap(x_t1, y_t1, 15, 17, tanque2_4);
+      }
+    }
+    //***********************CambiosDeDireccion***************************************
+    else if (entrada == 49){
+      FillRect(x_t1, y_t1, 17, 17, 0);
+      LCD_Bitmap(x_t1, y_t1, 15, 17, tanque2_1);
+      flag_orient = 0;
+    }
+    else if (entrada == 50){
+      FillRect(x_t1, y_t1, 17, 17, 0);
+      LCD_Bitmap(x_t1, y_t1, 17, 15, tanque2_2);
+      flag_orient = 1;
+    }
+    else if (entrada == 51){
+      FillRect(x_t1, y_t1, 17, 17, 0);
+      LCD_Bitmap(x_t1, y_t1, 17, 15, tanque2_3);
+      flag_orient = 2;
+    }
+    else if (entrada == 52){
+      FillRect(x_t1, y_t1, 17, 17, 0);
+      LCD_Bitmap(x_t1, y_t1, 15, 17, tanque2_4);
+      flag_orient = 3;
+    }
+    //***********************Disparo***************************************
+    /*if (entrada == 5){
+      switch (flag_orient){
+        case 
+      }
+    }*/
     
-    delay(100);
   }
   
  /* for(int x = 0; x <320-32; x++){
@@ -147,7 +232,7 @@ void loop() {
     //V_line( x + 16, 20, 32, 0x421b);
   } 
 */
-}
+
 //***************************************************************************************************************************************
 // Función para inicializar LCD
 //***************************************************************************************************************************************
