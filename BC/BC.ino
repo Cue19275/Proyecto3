@@ -1,10 +1,10 @@
 //***************************************************************************************************************************************
 /* Librería para el uso de la pantalla ILI9341 en modo 8 bits
- * Basado en el código de martinayotte - https://www.stm32duino.com/viewtopic.php?t=637
- * Adaptación, migración y creación de nuevas funciones: Pablo Mazariegos y José Morales
- * Con ayuda de: José Guerra
- * IE3027: Electrónica Digital 2 - 2019
- */
+   Basado en el código de martinayotte - https://www.stm32duino.com/viewtopic.php?t=637
+   Adaptación, migración y creación de nuevas funciones: Pablo Mazariegos y José Morales
+   Con ayuda de: José Guerra
+   IE3027: Electrónica Digital 2 - 2019
+*/
 //***************************************************************************************************************************************
 #include <stdint.h>
 #include <stdbool.h>
@@ -29,7 +29,7 @@
 #define LCD_RS PD_2
 #define LCD_WR PD_3
 #define LCD_RD PE_1
-int DPINS[] = {PB_0, PB_1, PB_2, PB_3, PB_4, PB_5, PB_6, PB_7};  
+int DPINS[] = {PB_0, PB_1, PB_2, PB_3, PB_4, PB_5, PB_6, PB_7};
 int entrada;
 int x_t1;
 int y_t1;
@@ -49,8 +49,20 @@ int disparo_horD;
 int disparo_activo;
 
 uint8_t BO1;
+uint8_t BO2;
+uint8_t BO3;
+uint8_t BO4;
+uint8_t BO5;
+uint8_t BO6;
 uint8_t fon;
 uint8_t FLAG;
+uint8_t FLAG2;
+uint8_t FLAGO;
+uint8_t FLAGO1;
+uint8_t FLAGO2;
+uint8_t FLAGO3;
+uint8_t FLAGO4;
+uint8_t FLAGO5;
 
 
 //***************************************************************************************************************************************
@@ -67,7 +79,7 @@ void Rect(unsigned int x, unsigned int y, unsigned int w, unsigned int h, unsign
 void FillRect(unsigned int x, unsigned int y, unsigned int w, unsigned int h, unsigned int c);
 void LCD_Print(String text, int x, int y, int fontSize, int color, int background);
 void LCD_Bitmap(unsigned int x, unsigned int y, unsigned int width, unsigned int height, unsigned char bitmap[]);
-void LCD_Sprite(int x, int y, int width, int height, unsigned char bitmap[],int columns, int index, char flip, char offset);
+void LCD_Sprite(int x, int y, int width, int height, unsigned char bitmap[], int columns, int index, char flip, char offset);
 void pista(void);
 //Indice de la imagen, 0, 0
 
@@ -77,17 +89,23 @@ extern uint8_t fondo[];
 //***************************************************************************************************************************************
 void setup() {
   Serial3.begin(9600);
-  SysCtlClockSet(SYSCTL_SYSDIV_2_5|SYSCTL_USE_PLL|SYSCTL_OSC_MAIN|SYSCTL_XTAL_16MHZ);
+  SysCtlClockSet(SYSCTL_SYSDIV_2_5 | SYSCTL_USE_PLL | SYSCTL_OSC_MAIN | SYSCTL_XTAL_16MHZ);
   Serial.begin(9600);
   GPIOPadConfigSet(GPIO_PORTB_BASE, 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7, GPIO_STRENGTH_8MA, GPIO_PIN_TYPE_STD_WPU);
   pinMode(PF_4, INPUT_PULLUP);
+  pinMode(PA_6, INPUT_PULLUP);
+  pinMode(PA_7, INPUT_PULLUP);
+  pinMode(PF_1, INPUT_PULLUP);
+  pinMode(PE_3, INPUT_PULLUP);
+  pinMode(PE_5, INPUT_PULLUP);
+
 
   Serial.println("Inicio");
   LCD_Init();
   LCD_Clear(0x00);
   //x1,y1,x2,y2
   FillRect(0, 0, 319, 206, 0x00);
-  
+
   String text1 = "MONSTRU INC.";
   String text2 = "&";
   String text3 = "CUE CORP.";
@@ -122,28 +140,28 @@ void setup() {
   //LCD_Bitmap(unsigned int x, unsigned int y, unsigned int width, unsigned int height, unsigned char bitmap[]);
   x_t1 = 80;
   y_t1 = 100;
-  disparo_vertU=0;
-  disparo_vertA=0;
-  disparo_horI=0;
-  disparo_horD=0;
-  disparo_activo=0;
+  disparo_vertU = 0;
+  disparo_vertA = 0;
+  disparo_horI = 0;
+  disparo_horD = 0;
+  disparo_activo = 0;
   flag_orient = 0;
   /*LCD_Bitmap(x_t1, y_t1, 15, 17, tanque2_1);
-  LCD_Bitmap(100, 110, 10, 8, balazo);
- /* LCD_Bitmap(30, 10, 17, 15, tanque2_2);
-  LCD_Bitmap(60, 10, 17, 15, tanque2_3);
-  LCD_Bitmap(80, 10, 15, 17, tanque2_4);
-  LCD_Bitmap(97, 10, 10, 8, misil1);*/
+    LCD_Bitmap(100, 110, 10, 8, balazo);
+    /* LCD_Bitmap(30, 10, 17, 15, tanque2_2);
+    LCD_Bitmap(60, 10, 17, 15, tanque2_3);
+    LCD_Bitmap(80, 10, 15, 17, tanque2_4);
+    LCD_Bitmap(97, 10, 10, 8, misil1);*/
 
-/*
-  for(int x = 0; x <319; x++){
-    LCD_Bitmap(x, 52, 16, 16, tile2);
-    LCD_Bitmap(x, 68, 16, 16, tile);
+  /*
+    for(int x = 0; x <319; x++){
+      LCD_Bitmap(x, 52, 16, 16, tile2);
+      LCD_Bitmap(x, 68, 16, 16, tile);
 
-    LCD_Bitmap(x, 207, 16, 16, tile);
-    LCD_Bitmap(x, 223, 16, 16, tile);
-    x += 15;
- }*/
+      LCD_Bitmap(x, 207, 16, 16, tile);
+      LCD_Bitmap(x, 223, 16, 16, tile);
+      x += 15;
+    }*/
 
 }
 //***************************************************************************************************************************************
@@ -151,7 +169,7 @@ void setup() {
 //***************************************************************************************************************************************
 void loop() {
 
-  BO1 = digitalRead(PF_4);
+  BO1 = digitalRead(PA_7);
   if (FLAG == 1) {
     if (BO1 == LOW) {
       fon = 1;
@@ -170,180 +188,274 @@ void loop() {
     }
     LCD_Sprite(30, 30, 17, 17, explo, 6, x, 0, 0);*/
 
-    if(Serial.available()){
-      entrada = Serial.read();
-    }
-    //***********************Movimiento***************************************
-    if(entrada == 48 && flag_orient == 0){
-      FillRect(x_t1, y_t1, 15, 17, 0);
-      y_t1-=5;
-      if(y_t1<=y_limsup){
-       y_t1+=5;
-       LCD_Bitmap(x_t1, y_t1, 15, 17, tanque2_1);
-      }
-      else{
-      LCD_Bitmap(x_t1, y_t1, 15, 17, tanque2_1);
-      }
-    }
-    else if(entrada == 48 && flag_orient == 1){
-      FillRect(x_t1, y_t1, 17, 15, 0);
-      x_t1+=5;
-      if(x_t1>=x_limsup){
-        x_t1-=5;
-        LCD_Bitmap(x_t1, y_t1, 17, 15, tanque2_2);
-      }
-      else{
-      LCD_Bitmap(x_t1, y_t1, 17, 15, tanque2_2);
-      }
-    }
-    else if(entrada == 48 && flag_orient == 2){
-      FillRect(x_t1, y_t1, 17, 15, 0);
-      x_t1-=5;
-      if(x_t1<=x_liminf){
-        x_t1+=5;
-        LCD_Bitmap(x_t1, y_t1, 17, 15, tanque2_3);
-      }
-      else{
-      LCD_Bitmap(x_t1, y_t1, 17, 15, tanque2_3);
-      }
-    }
-    else if(entrada == 48 && flag_orient == 3){
-      FillRect(x_t1, y_t1, 15, 17, 0);
-      y_t1+=5;
-      if(y_t1>=y_liminf){
-        y_t1-=5;
-        LCD_Bitmap(x_t1, y_t1, 15, 17, tanque2_4);
-      }
-      else{
-      LCD_Bitmap(x_t1, y_t1, 15, 17, tanque2_4);
-      }
-    }
-    //***********************CambiosDeDireccion***************************************
-    else if (entrada == 49){
-      FillRect(x_t1, y_t1, 17, 17, 0);
-      LCD_Bitmap(x_t1, y_t1, 15, 17, tanque2_1);
-      flag_orient = 0;
-    }
-    else if (entrada == 50){
-      FillRect(x_t1, y_t1, 17, 17, 0);
-      LCD_Bitmap(x_t1, y_t1, 17, 15, tanque2_2);
-      flag_orient = 1;
-    }
-    else if (entrada == 51){
-      FillRect(x_t1, y_t1, 17, 17, 0);
-      LCD_Bitmap(x_t1, y_t1, 17, 15, tanque2_3);
-      flag_orient = 2;
-    }
-    else if (entrada == 52){
-      FillRect(x_t1, y_t1, 17, 17, 0);
-      LCD_Bitmap(x_t1, y_t1, 15, 17, tanque2_4);
-      flag_orient = 3;
-    }
-    //***********************Disparo***************************************
-    if((entrada ==53 )&&((flag_orient == 0)&&(disparo_activo == 0))){
-      disparo_vertU = 1;
-      disparo_vertA = 0;
-      disparo_horI = 0;
-      disparo_horD = 0;
-
-      if((y_t1-12)>=y_limsup){
-       disparo_activo=1;
-       LCD_Bitmap((x_t1+4), (y_t1-12), 8, 10, balazo_v);
-       x_b1 = x_t1+4;
-       y_b1 = y_t1-12;
-      }
-      else{
-        disparo_activo=0;
-      }
-    }
-    else if((entrada ==53 )&&((flag_orient == 1)&&(disparo_activo == 0))){
-      disparo_vertU = 0;
-      disparo_vertA = 1;
-      disparo_horI = 0;
-      disparo_horD = 0;
-      disparo_activo=1;
-      LCD_Bitmap((x_t1+19), (y_t1+4), 10, 8, balazo);
-    }
-    else if((entrada ==53 )&&((flag_orient == 2)&&(disparo_activo == 0))){
-      disparo_vertU = 0;
-      disparo_vertA = 0;
-      disparo_horI = 1;
-      disparo_horD = 0;
-      disparo_activo=1;
-      LCD_Bitmap((x_t1-12), (y_t1+4), 10, 8, balazo);
-    }
-    else if((entrada ==53 )&&((flag_orient == 3)&&(disparo_activo == 0))){
-      disparo_vertU = 0;
-      disparo_vertA = 0;
-      disparo_horI = 0;
-      disparo_horD = 1;
-      disparo_activo=1;
-      LCD_Bitmap((x_t1+4), (y_t1+17), 8, 10, balazo_v);
-    }
-    //------->Avance Disparo
-    if((disparo_activo == 1)&&(disparo_vertU==1)){
-      FillRect(x_b1, y_b1, 8, 10, 0);
-      y_b1-=5;
-      if(y_b1>=y_limsup){
 
 
-        LCD_Bitmap((x_b1), (y_b1), 8, 10, balazo_v);
-        delay(100);
-      }
-      else{
-        disparo_activo=0;
-      }
+//***********************Movimiento***************************************
+BO2 = digitalRead(PA_6);
+BO3 = digitalRead(PF_4);
+BO4 = digitalRead(PF_1);
+BO5 = digitalRead(PE_5);
+BO6 = digitalRead(PE_3);
 
-    }
-
-
+if (FLAG2 == 1) {
+  if (BO1 == LOW) {
+    FLAGO = 1;
   }
 
- /* for(int x = 0; x <320-32; x++){
-    delay(15);
-    int anim2 = (x/35)%2;
+  if (FLAGO == 1 && BO1== HIGH) {
+    FLAGO = 0;
+    entrada = 48;
 
-    LCD_Sprite(x,100,16,24,planta,2,anim2,0,1);
-    V_line( x -1, 100, 24, 0x421b);
+  }
+}
 
-    //LCD_Bitmap(x, 100, 32, 32, prueba);
+if (FLAG2 == 1) {
+  if (BO2 == LOW) {
+    FLAGO1 = 1;
+  }
 
-    int anim = (x/11)%8;
+  if (FLAGO1 == 1 && BO2 == HIGH) {
+    FLAGO1 = 0;
+    entrada = 49;
+
+  }
+}
+
+if (FLAG2 == 1) {
+  if (BO3 == LOW) {
+    FLAGO2 = 1;
+  }
+
+  if (FLAGO2 == 1 && BO3 == HIGH) {
+    FLAGO2 = 0;
+    entrada = 50;
+
+  }
+}
+
+if (FLAG2 == 1) {
+  if (BO4 == LOW) {
+    FLAGO3 = 1;
+  }
+
+  if (FLAGO3 == 1 && BO4 == HIGH) {
+    FLAGO3 = 0;
+    entrada = 51;
+
+  }
+}
+
+if (FLAG2 == 1) {
+  if (BO5 == LOW) {
+    FLAGO4 = 1;
+  }
+
+  if (FLAGO4 == 1 && BO5 == HIGH) {
+    FLAGO4 = 0;
+    entrada = 52;
+
+  }
+}
+
+if (FLAG2 == 1) {
+  if (BO6 == LOW) {
+    FLAGO5 = 1;
+  }
+
+  if (FLAGO5 == 1 && BO6 == HIGH) {
+    FLAGO5 = 0;
+    entrada = 53;
+
+  }
+}
 
 
-    int anim3 = (x/11)%4;
-
-    LCD_Sprite(x, 20, 16, 32, mario,8, anim,1, 0);
-    V_line( x -1, 20, 32, 0x421b);
-
-    //LCD_Sprite(x,100,32,32,bowser,4,anim3,0,1);
-    //V_line( x -1, 100, 32, 0x421b);
 
 
-    LCD_Sprite(x, 140, 16, 16, enemy,2, anim2,1, 0);
-    V_line( x -1, 140, 16, 0x421b);
 
-    LCD_Sprite(x, 175, 16, 32, luigi,8, anim,1, 0);
-    V_line( x -1, 175, 32, 0x421b);
+
+if (entrada == 48 && flag_orient == 0) {
+  entrada = 0;
+  FillRect(x_t1, y_t1, 15, 17, 0);
+  y_t1 -= 5;
+  if (y_t1 <= y_limsup) {
+    y_t1 += 5;
+    LCD_Bitmap(x_t1, y_t1, 15, 17, tanque2_1);
+  }
+  else {
+    LCD_Bitmap(x_t1, y_t1, 15, 17, tanque2_1);
+  }
+}
+else if (entrada == 48 && flag_orient == 1) {
+  entrada = 0;
+  FillRect(x_t1, y_t1, 17, 15, 0);
+  x_t1 += 5;
+  if (x_t1 >= x_limsup) {
+    x_t1 -= 5;
+    LCD_Bitmap(x_t1, y_t1, 17, 15, tanque2_2);
+  }
+  else {
+    LCD_Bitmap(x_t1, y_t1, 17, 15, tanque2_2);
+  }
+}
+else if (entrada == 48 && flag_orient == 2) {
+  entrada = 0;
+  FillRect(x_t1, y_t1, 17, 15, 0);
+  x_t1 -= 5;
+  if (x_t1 <= x_liminf) {
+    x_t1 += 5;
+    LCD_Bitmap(x_t1, y_t1, 17, 15, tanque2_3);
+  }
+  else {
+    LCD_Bitmap(x_t1, y_t1, 17, 15, tanque2_3);
+  }
+}
+else if (entrada == 48 && flag_orient == 3) {
+  entrada = 0;
+  FillRect(x_t1, y_t1, 15, 17, 0);
+  y_t1 += 5;
+  if (y_t1 >= y_liminf) {
+    y_t1 -= 5;
+    LCD_Bitmap(x_t1, y_t1, 15, 17, tanque2_4);
+  }
+  else {
+    LCD_Bitmap(x_t1, y_t1, 15, 17, tanque2_4);
+  }
+}
+//***********************CambiosDeDireccion***************************************
+else if (entrada == 49) {
+  entrada = 0;
+  FillRect(x_t1, y_t1, 17, 17, 0);
+  LCD_Bitmap(x_t1, y_t1, 15, 17, tanque2_1);
+  flag_orient = 0;
+}
+else if (entrada == 50) {
+  entrada = 0;
+  FillRect(x_t1, y_t1, 17, 17, 0);
+  LCD_Bitmap(x_t1, y_t1, 17, 15, tanque2_2);
+  flag_orient = 1;
+}
+else if (entrada == 51) {
+  entrada = 0;
+  FillRect(x_t1, y_t1, 17, 17, 0);
+  LCD_Bitmap(x_t1, y_t1, 17, 15, tanque2_3);
+  flag_orient = 2;
+}
+else if (entrada == 52) {
+  entrada = 0;
+  FillRect(x_t1, y_t1, 17, 17, 0);
+  LCD_Bitmap(x_t1, y_t1, 15, 17, tanque2_4);
+  flag_orient = 3;
+}
+//***********************Disparo***************************************
+if ((entrada == 53 ) && ((flag_orient == 0) && (disparo_activo == 0))) {
+  entrada = 0;
+  disparo_vertU = 1;
+  disparo_vertA = 0;
+  disparo_horI = 0;
+  disparo_horD = 0;
+
+  if ((y_t1 - 12) >= y_limsup) {
+    disparo_activo = 1;
+    LCD_Bitmap((x_t1 + 4), (y_t1 - 12), 8, 10, balazo_v);
+    x_b1 = x_t1 + 4;
+    y_b1 = y_t1 - 12;
+  }
+  else {
+    disparo_activo = 0;
+  }
+}
+else if ((entrada == 53 ) && ((flag_orient == 1) && (disparo_activo == 0))) {
+  entrada = 0;
+  disparo_vertU = 0;
+  disparo_vertA = 1;
+  disparo_horI = 0;
+  disparo_horD = 0;
+  disparo_activo = 1;
+  LCD_Bitmap((x_t1 + 19), (y_t1 + 4), 10, 8, balazo);
+}
+else if ((entrada == 53 ) && ((flag_orient == 2) && (disparo_activo == 0))) {
+  disparo_vertU = 0;
+  disparo_vertA = 0;
+  disparo_horI = 1;
+  disparo_horD = 0;
+  disparo_activo = 1;
+  LCD_Bitmap((x_t1 - 12), (y_t1 + 4), 10, 8, balazo);
+}
+else if ((entrada == 53 ) && ((flag_orient == 3) && (disparo_activo == 0))) {
+  entrada = 0;
+  disparo_vertU = 0;
+  disparo_vertA = 0;
+  disparo_horI = 0;
+  disparo_horD = 1;
+  disparo_activo = 1;
+  LCD_Bitmap((x_t1 + 4), (y_t1 + 17), 8, 10, balazo_v);
+}
+//------->Avance Disparo
+if ((disparo_activo == 1) && (disparo_vertU == 1)) {
+  FillRect(x_b1, y_b1, 8, 10, 0);
+  y_b1 -= 5;
+  if (y_b1 >= y_limsup) {
+
+
+    LCD_Bitmap((x_b1), (y_b1), 8, 10, balazo_v);
+    delay(100);
+  }
+  else {
+    disparo_activo = 0;
+  }
+
+}
+
+
+}
+
+
+/* for(int x = 0; x <320-32; x++){
+   delay(15);
+   int anim2 = (x/35)%2;
+
+   LCD_Sprite(x,100,16,24,planta,2,anim2,0,1);
+   V_line( x -1, 100, 24, 0x421b);
+
+   //LCD_Bitmap(x, 100, 32, 32, prueba);
+
+   int anim = (x/11)%8;
+
+
+   int anim3 = (x/11)%4;
+
+   LCD_Sprite(x, 20, 16, 32, mario,8, anim,1, 0);
+   V_line( x -1, 20, 32, 0x421b);
+
+   //LCD_Sprite(x,100,32,32,bowser,4,anim3,0,1);
+   //V_line( x -1, 100, 32, 0x421b);
+
+
+   LCD_Sprite(x, 140, 16, 16, enemy,2, anim2,1, 0);
+   V_line( x -1, 140, 16, 0x421b);
+
+   LCD_Sprite(x, 175, 16, 32, luigi,8, anim,1, 0);
+   V_line( x -1, 175, 32, 0x421b);
   }
   for(int x = 320-32; x >0; x--){
-    delay(5);
-    int anim = (x/11)%8;
-    int anim2 = (x/11)%2;
+   delay(5);
+   int anim = (x/11)%8;
+   int anim2 = (x/11)%2;
 
-    LCD_Sprite(x,100,16,24,planta,2,anim2,0,0);
-    V_line( x + 16, 100, 24, 0x421b);
+   LCD_Sprite(x,100,16,24,planta,2,anim2,0,0);
+   V_line( x + 16, 100, 24, 0x421b);
 
-    //LCD_Bitmap(x, 100, 32, 32, prueba);
+   //LCD_Bitmap(x, 100, 32, 32, prueba);
 
-    //LCD_Sprite(x, 140, 16, 16, enemy,2, anim2,0, 0);
-    //V_line( x + 16, 140, 16, 0x421b);
+   //LCD_Sprite(x, 140, 16, 16, enemy,2, anim2,0, 0);
+   //V_line( x + 16, 140, 16, 0x421b);
 
-    //LCD_Sprite(x, 175, 16, 32, luigi,8, anim,0, 0);
-    //V_line( x + 16, 175, 32, 0x421b);
+   //LCD_Sprite(x, 175, 16, 32, luigi,8, anim,0, 0);
+   //V_line( x + 16, 175, 32, 0x421b);
 
-    //LCD_Sprite(x, 20, 16, 32, mario,8, anim,0, 0);
-    //V_line( x + 16, 20, 32, 0x421b);
+   //LCD_Sprite(x, 20, 16, 32, mario,8, anim,0, 0);
+   //V_line( x + 16, 20, 32, 0x421b);
   }
 */
 
@@ -356,7 +468,7 @@ void LCD_Init(void) {
   pinMode(LCD_RS, OUTPUT);
   pinMode(LCD_WR, OUTPUT);
   pinMode(LCD_RD, OUTPUT);
-  for (uint8_t i = 0; i < 8; i++){
+  for (uint8_t i = 0; i < 8; i++) {
     pinMode(DPINS[i], OUTPUT);
   }
   //****************************************
@@ -391,7 +503,7 @@ void LCD_Init(void) {
   LCD_DATA(0x08);
   //****************************************
   LCD_CMD(0x36);  // (MEMORYACCESS)
-  LCD_DATA(0x40|0x80|0x20|0x08); // LCD_DATA(0x19);
+  LCD_DATA(0x40 | 0x80 | 0x20 | 0x08); // LCD_DATA(0x19);
   //****************************************
   LCD_CMD(0x3A); // Set_pixel_format (PIXELFORMAT)
   LCD_DATA(0x05); // color setings, 05h - 16bit pixel, 11h - 3bit pixel
@@ -445,7 +557,7 @@ void LCD_Init(void) {
   LCD_DATA(0x00);
   LCD_DATA(0x01);
   LCD_DATA(0xE0);
-//  LCD_DATA(0x8F);
+  //  LCD_DATA(0x8F);
   LCD_CMD(0x29); //display on
   LCD_CMD(0x2C); //display on
 
@@ -493,7 +605,7 @@ void SetWindows(unsigned int x1, unsigned int y1, unsigned int x2, unsigned int 
 //***************************************************************************************************************************************
 // Función para borrar la pantalla - parámetros (color)
 //***************************************************************************************************************************************
-void LCD_Clear(unsigned int c){
+void LCD_Clear(unsigned int c) {
   unsigned int x, y;
   LCD_CMD(0x02c); // write_memory_start
   digitalWrite(LCD_RS, HIGH);
@@ -518,8 +630,8 @@ void H_line(unsigned int x, unsigned int y, unsigned int l, unsigned int c) {
   SetWindows(x, y, l, y);
   j = l;// * 2;
   for (i = 0; i < l; i++) {
-      LCD_DATA(c >> 8);
-      LCD_DATA(c);
+    LCD_DATA(c >> 8);
+    LCD_DATA(c);
   }
   digitalWrite(LCD_CS, HIGH);
 }
@@ -527,7 +639,7 @@ void H_line(unsigned int x, unsigned int y, unsigned int l, unsigned int c) {
 // Función para dibujar una línea vertical - parámetros ( coordenada x, cordenada y, longitud, color)
 //***************************************************************************************************************************************
 void V_line(unsigned int x, unsigned int y, unsigned int l, unsigned int c) {
-  unsigned int i,j;
+  unsigned int i, j;
   LCD_CMD(0x02c); //write_memory_start
   digitalWrite(LCD_RS, HIGH);
   digitalWrite(LCD_CS, LOW);
@@ -545,9 +657,9 @@ void V_line(unsigned int x, unsigned int y, unsigned int l, unsigned int c) {
 //***************************************************************************************************************************************
 void Rect(unsigned int x, unsigned int y, unsigned int w, unsigned int h, unsigned int c) {
   H_line(x  , y  , w, c);
-  H_line(x  , y+h, w, c);
+  H_line(x  , y + h, w, c);
   V_line(x  , y  , h, c);
-  V_line(x+w, y  , h, c);
+  V_line(x + w, y  , h, c);
 }
 //***************************************************************************************************************************************
 // Función para dibujar un rectángulo relleno - parámetros ( coordenada x, cordenada y, ancho, alto, color)
@@ -558,7 +670,7 @@ void Rect(unsigned int x, unsigned int y, unsigned int w, unsigned int h, unsign
     H_line(x  , y  , w, c);
     H_line(x  , y+i, w, c);
   }
-}
+  }
 */
 
 void FillRect(unsigned int x, unsigned int y, unsigned int w, unsigned int h, unsigned int c) {
@@ -567,10 +679,10 @@ void FillRect(unsigned int x, unsigned int y, unsigned int w, unsigned int h, un
   digitalWrite(LCD_CS, LOW);
 
   unsigned int x2, y2;
-  x2 = x+w;
-  y2 = y+h;
-  SetWindows(x, y, x2-1, y2-1);
-  unsigned int k = w*h*2-1;
+  x2 = x + w;
+  y2 = y + h;
+  SetWindows(x, y, x2 - 1, y2 - 1);
+  unsigned int k = w * h * 2 - 1;
   unsigned int i, j;
   for (int i = 0; i < w; i++) {
     for (int j = 0; j < h; j++) {
@@ -579,7 +691,7 @@ void FillRect(unsigned int x, unsigned int y, unsigned int w, unsigned int h, un
 
       //LCD_DATA(bitmap[k]);
       k = k - 2;
-     }
+    }
   }
   digitalWrite(LCD_CS, HIGH);
 }
@@ -590,23 +702,23 @@ void LCD_Print(String text, int x, int y, int fontSize, int color, int backgroun
   int fontXSize ;
   int fontYSize ;
 
-  if(fontSize == 1){
+  if (fontSize == 1) {
     fontXSize = fontXSizeSmal ;
     fontYSize = fontYSizeSmal ;
   }
-  if(fontSize == 2){
+  if (fontSize == 2) {
     fontXSize = fontXSizeBig ;
     fontYSize = fontYSizeBig ;
   }
 
   char charInput ;
   int cLength = text.length();
-  Serial.println(cLength,DEC);
+  Serial.println(cLength, DEC);
   int charDec ;
   int c ;
   int charHex ;
-  char char_array[cLength+1];
-  text.toCharArray(char_array, cLength+1) ;
+  char char_array[cLength + 1];
+  text.toCharArray(char_array, cLength + 1) ;
   for (int i = 0; i < cLength ; i++) {
     charInput = char_array[i];
     Serial.println(char_array[i]);
@@ -615,10 +727,10 @@ void LCD_Print(String text, int x, int y, int fontSize, int color, int backgroun
     SetWindows(x + (i * fontXSize), y, x + (i * fontXSize) + fontXSize - 1, y + fontYSize );
     long charHex1 ;
     for ( int n = 0 ; n < fontYSize ; n++ ) {
-      if (fontSize == 1){
+      if (fontSize == 1) {
         charHex1 = pgm_read_word_near(smallFont + ((charDec - 32) * fontYSize) + n);
       }
-      if (fontSize == 2){
+      if (fontSize == 2) {
         charHex1 = pgm_read_word_near(bigFont + ((charDec - 32) * fontYSize) + n);
       }
       for (int t = 1; t < fontXSize + 1 ; t++) {
@@ -637,64 +749,64 @@ void LCD_Print(String text, int x, int y, int fontSize, int color, int backgroun
 //***************************************************************************************************************************************
 // Función para dibujar una imagen a partir de un arreglo de colores (Bitmap) Formato (Color 16bit R 5bits G 6bits B 5bits)
 //***************************************************************************************************************************************
-void LCD_Bitmap(unsigned int x, unsigned int y, unsigned int width, unsigned int height, unsigned char bitmap[]){
+void LCD_Bitmap(unsigned int x, unsigned int y, unsigned int width, unsigned int height, unsigned char bitmap[]) {
   LCD_CMD(0x02c); // write_memory_start
   digitalWrite(LCD_RS, HIGH);
   digitalWrite(LCD_CS, LOW);
 
   unsigned int x2, y2;
-  x2 = x+width;
-  y2 = y+height;
-  SetWindows(x, y, x2-1, y2-1);
+  x2 = x + width;
+  y2 = y + height;
+  SetWindows(x, y, x2 - 1, y2 - 1);
   unsigned int k = 0;
   unsigned int i, j;
 
   for (int i = 0; i < width; i++) {
     for (int j = 0; j < height; j++) {
       LCD_DATA(bitmap[k]);
-      LCD_DATA(bitmap[k+1]);
+      LCD_DATA(bitmap[k + 1]);
       //LCD_DATA(bitmap[k]);
       k = k + 2;
-     }
+    }
   }
   digitalWrite(LCD_CS, HIGH);
 }
 //***************************************************************************************************************************************
 // Función para dibujar una imagen sprite - los parámetros columns = número de imagenes en el sprite, index = cual desplegar, flip = darle vuelta
 //***************************************************************************************************************************************
-void LCD_Sprite(int x, int y, int width, int height, unsigned char bitmap[],int columns, int index, char flip, char offset){
+void LCD_Sprite(int x, int y, int width, int height, unsigned char bitmap[], int columns, int index, char flip, char offset) {
   LCD_CMD(0x02c); // write_memory_start
   digitalWrite(LCD_RS, HIGH);
   digitalWrite(LCD_CS, LOW);
 
   unsigned int x2, y2;
-  x2 =   x+width;
-  y2=    y+height;
-  SetWindows(x, y, x2-1, y2-1);
+  x2 =   x + width;
+  y2 =    y + height;
+  SetWindows(x, y, x2 - 1, y2 - 1);
   int k = 0;
-  int ancho = ((width*columns));
-  if(flip){
-  for (int j = 0; j < height; j++){
-      k = (j*(ancho) + index*width -1 - offset)*2;
-      k = k+width*2;
-     for (int i = 0; i < width; i++){
-      LCD_DATA(bitmap[k]);
-      LCD_DATA(bitmap[k+1]);
-      k = k - 2;
-     }
-  }
-  }else{
-     for (int j = 0; j < height; j++){
-      k = (j*(ancho) + index*width + 1 + offset)*2;
-     for (int i = 0; i < width; i++){
-      LCD_DATA(bitmap[k]);
-      LCD_DATA(bitmap[k+1]);
-      k = k + 2;
-     }
-  }
-
-
+  int ancho = ((width * columns));
+  if (flip) {
+    for (int j = 0; j < height; j++) {
+      k = (j * (ancho) + index * width - 1 - offset) * 2;
+      k = k + width * 2;
+      for (int i = 0; i < width; i++) {
+        LCD_DATA(bitmap[k]);
+        LCD_DATA(bitmap[k + 1]);
+        k = k - 2;
+      }
     }
+  } else {
+    for (int j = 0; j < height; j++) {
+      k = (j * (ancho) + index * width + 1 + offset) * 2;
+      for (int i = 0; i < width; i++) {
+        LCD_DATA(bitmap[k]);
+        LCD_DATA(bitmap[k + 1]);
+        k = k + 2;
+      }
+    }
+
+
+  }
   digitalWrite(LCD_CS, HIGH);
 }
 
@@ -793,21 +905,23 @@ void pista(void) {
 
   LCD_Bitmap(x_t1, y_t1, 15, 17, tanque2_1);
   LCD_Bitmap(100, 110, 10, 8, balazo);
- /* LCD_Bitmap(30, 10, 17, 15, tanque2_2);
-  LCD_Bitmap(60, 10, 17, 15, tanque2_3);
-  LCD_Bitmap(80, 10, 15, 17, tanque2_4);
-  LCD_Bitmap(97, 10, 10, 8, misil1);*/
+  FLAG = 0;
+  FLAG2 = 1;
+  /* LCD_Bitmap(30, 10, 17, 15, tanque2_2);
+    LCD_Bitmap(60, 10, 17, 15, tanque2_3);
+    LCD_Bitmap(80, 10, 15, 17, tanque2_4);
+    LCD_Bitmap(97, 10, 10, 8, misil1);*/
 
-/*
-  for(int x = 0; x <319; x++){
-    LCD_Bitmap(x, 52, 16, 16, tile2);
-    LCD_Bitmap(x, 68, 16, 16, tile);
+  /*
+    for(int x = 0; x <319; x++){
+      LCD_Bitmap(x, 52, 16, 16, tile2);
+      LCD_Bitmap(x, 68, 16, 16, tile);
 
-    LCD_Bitmap(x, 207, 16, 16, tile);
-    LCD_Bitmap(x, 223, 16, 16, tile);
-    x += 15;
-    
- }*/
+      LCD_Bitmap(x, 207, 16, 16, tile);
+      LCD_Bitmap(x, 223, 16, 16, tile);
+      x += 15;
+
+    }*/
 }
 
 
