@@ -47,6 +47,11 @@ int disparo_vertA;
 int disparo_horI;
 int disparo_horD;
 int disparo_activo;
+int DPINS[] = {PB_0, PB_1, PB_2, PB_3, PB_4, PB_5, PB_6, PB_7};
+uint8_t BO1;
+uint8_t fon;
+uint8_t FLAG;
+
 
 //***************************************************************************************************************************************
 // Functions Prototypes
@@ -78,13 +83,40 @@ void setup() {
   Serial.println("Inicio");
   LCD_Init();
   LCD_Clear(0x00);
-  
-  
-  String text1 = "Super Mario World!";
-  LCD_Print(text1, 20, 100, 2, 0xffff, 0x421b);
-  delay(500);
-//LCD_Sprite(int x, int y, int width, int height, unsigned char bitmap[],int columns, int index, char flip, char offset);
-    
+  //x1,y1,x2,y2
+  FillRect(0, 0, 319, 206, 0x00);
+
+  String text1 = "MONSTRU INC.";
+  String text2 = "&";
+  String text3 = "CUE CORP.";
+  //text, x, y ,tamaño de font, color, background
+  LCD_Print(text1, 0, 100, 2, 0xffff, 0x00);
+  LCD_Print(text2, 0, 120, 2, 0xffff, 0x00);
+  LCD_Print(text3, 0, 140, 2, 0xffff, 0x00);
+  delay (3000);
+
+  LCD_Clear(0x00);
+
+  String text4 = "PRESENT";
+  //text, x, y ,tamaño de font, color, background
+  LCD_Print(text4, 100, 100, 2, 0xffff, 0x00);
+  delay (5000);
+
+  LCD_Clear(0x00);
+
+  LCD_Bitmap(0, 0, 320, 240, fondo);
+
+  FLAG = 1;
+
+
+
+
+
+
+
+
+  //LCD_Sprite(int x, int y, int width, int height, unsigned char bitmap[],int columns, int index, char flip, char offset);
+
   //LCD_Bitmap(unsigned int x, unsigned int y, unsigned int width, unsigned int height, unsigned char bitmap[]);
   FillRect(0, 0, 320, 240, 0x0);
   x_t1 = 80;
@@ -101,22 +133,35 @@ void setup() {
   LCD_Bitmap(60, 10, 17, 15, tanque2_3);
   LCD_Bitmap(80, 10, 15, 17, tanque2_4);
   LCD_Bitmap(97, 10, 10, 8, misil1);*/
-  
-  
+
+
   for(int x = 0; x <319; x++){
     LCD_Bitmap(x, 52, 16, 16, tile2);
     LCD_Bitmap(x, 68, 16, 16, tile);
-    
+
     LCD_Bitmap(x, 207, 16, 16, tile);
     LCD_Bitmap(x, 223, 16, 16, tile);
     x += 15;
  }
-  
+
 }
 //***************************************************************************************************************************************
 // Loop Infinito
 //***************************************************************************************************************************************
 void loop() {
+
+  BO1 = digitalRead(PF_4);
+  if (FLAG == 1) {
+    if (BO1 == LOW) {
+      fon = 1;
+    }
+    if (fon == 1 && BO1 == HIGH) {
+      fon = 0;
+      pista();
+
+    }
+  }
+}
 
   /*for (int x = 0; x<6; x++){
     if(x == 6){
@@ -133,7 +178,7 @@ void loop() {
       FillRect(x_t1, y_t1, 15, 17, 0);
       y_t1-=5;
       if(y_t1<=y_limsup){
-       y_t1+=5; 
+       y_t1+=5;
        LCD_Bitmap(x_t1, y_t1, 15, 17, tanque2_1);
       }
       else{
@@ -200,7 +245,7 @@ void loop() {
       disparo_vertA = 0;
       disparo_horI = 0;
       disparo_horD = 0;
-      
+
       if((y_t1-12)>=y_limsup){
        disparo_activo=1;
        LCD_Bitmap((x_t1+4), (y_t1-12), 8, 10, balazo_v);
@@ -240,44 +285,44 @@ void loop() {
       FillRect(x_b1, y_b1, 8, 10, 0);
       y_b1-=5;
       if(y_b1>=y_limsup){
-        
-        
+
+
         LCD_Bitmap((x_b1), (y_b1), 8, 10, balazo_v);
         delay(100);
       }
       else{
         disparo_activo=0;
       }
-      
+
     }
 
-    
+
   }
-  
+
  /* for(int x = 0; x <320-32; x++){
     delay(15);
     int anim2 = (x/35)%2;
-    
+
     LCD_Sprite(x,100,16,24,planta,2,anim2,0,1);
     V_line( x -1, 100, 24, 0x421b);
-    
+
     //LCD_Bitmap(x, 100, 32, 32, prueba);
-    
+
     int anim = (x/11)%8;
-    
+
 
     int anim3 = (x/11)%4;
-    
+
     LCD_Sprite(x, 20, 16, 32, mario,8, anim,1, 0);
     V_line( x -1, 20, 32, 0x421b);
- 
+
     //LCD_Sprite(x,100,32,32,bowser,4,anim3,0,1);
     //V_line( x -1, 100, 32, 0x421b);
- 
- 
+
+
     LCD_Sprite(x, 140, 16, 16, enemy,2, anim2,1, 0);
     V_line( x -1, 140, 16, 0x421b);
-  
+
     LCD_Sprite(x, 175, 16, 32, luigi,8, anim,1, 0);
     V_line( x -1, 175, 32, 0x421b);
   }
@@ -285,21 +330,21 @@ void loop() {
     delay(5);
     int anim = (x/11)%8;
     int anim2 = (x/11)%2;
-    
+
     LCD_Sprite(x,100,16,24,planta,2,anim2,0,0);
     V_line( x + 16, 100, 24, 0x421b);
-    
+
     //LCD_Bitmap(x, 100, 32, 32, prueba);
-    
+
     //LCD_Sprite(x, 140, 16, 16, enemy,2, anim2,0, 0);
     //V_line( x + 16, 140, 16, 0x421b);
-    
+
     //LCD_Sprite(x, 175, 16, 32, luigi,8, anim,0, 0);
     //V_line( x + 16, 175, 32, 0x421b);
 
     //LCD_Sprite(x, 20, 16, 32, mario,8, anim,0, 0);
     //V_line( x + 16, 20, 32, 0x421b);
-  } 
+  }
 */
 
 //***************************************************************************************************************************************
@@ -340,7 +385,7 @@ void LCD_Init(void) {
   LCD_DATA(0x71);
   LCD_DATA(0x19);
   //****************************************
-  LCD_CMD(0xD0);   // (SETPOWER) 
+  LCD_CMD(0xD0);   // (SETPOWER)
   LCD_DATA(0x07);
   LCD_DATA(0x01);
   LCD_DATA(0x08);
@@ -401,7 +446,7 @@ void LCD_Init(void) {
   LCD_DATA(0x01);
   LCD_DATA(0xE0);
 //  LCD_DATA(0x8F);
-  LCD_CMD(0x29); //display on 
+  LCD_CMD(0x29); //display on
   LCD_CMD(0x2C); //display on
 
   LCD_CMD(ILI9341_INVOFF); //Invert Off
@@ -435,36 +480,36 @@ void LCD_DATA(uint8_t data) {
 void SetWindows(unsigned int x1, unsigned int y1, unsigned int x2, unsigned int y2) {
   LCD_CMD(0x2a); // Set_column_address 4 parameters
   LCD_DATA(x1 >> 8);
-  LCD_DATA(x1);   
+  LCD_DATA(x1);
   LCD_DATA(x2 >> 8);
-  LCD_DATA(x2);   
+  LCD_DATA(x2);
   LCD_CMD(0x2b); // Set_page_address 4 parameters
   LCD_DATA(y1 >> 8);
-  LCD_DATA(y1);   
+  LCD_DATA(y1);
   LCD_DATA(y2 >> 8);
-  LCD_DATA(y2);   
+  LCD_DATA(y2);
   LCD_CMD(0x2c); // Write_memory_start
 }
 //***************************************************************************************************************************************
 // Función para borrar la pantalla - parámetros (color)
 //***************************************************************************************************************************************
-void LCD_Clear(unsigned int c){  
+void LCD_Clear(unsigned int c){
   unsigned int x, y;
   LCD_CMD(0x02c); // write_memory_start
   digitalWrite(LCD_RS, HIGH);
-  digitalWrite(LCD_CS, LOW);   
+  digitalWrite(LCD_CS, LOW);
   SetWindows(0, 0, 319, 239); // 479, 319);
   for (x = 0; x < 320; x++)
     for (y = 0; y < 240; y++) {
-      LCD_DATA(c >> 8); 
-      LCD_DATA(c); 
+      LCD_DATA(c >> 8);
+      LCD_DATA(c);
     }
   digitalWrite(LCD_CS, HIGH);
-} 
+}
 //***************************************************************************************************************************************
 // Función para dibujar una línea horizontal - parámetros ( coordenada x, cordenada y, longitud, color)
-//*************************************************************************************************************************************** 
-void H_line(unsigned int x, unsigned int y, unsigned int l, unsigned int c) {  
+//***************************************************************************************************************************************
+void H_line(unsigned int x, unsigned int y, unsigned int l, unsigned int c) {
   unsigned int i, j;
   LCD_CMD(0x02c); //write_memory_start
   digitalWrite(LCD_RS, HIGH);
@@ -473,15 +518,15 @@ void H_line(unsigned int x, unsigned int y, unsigned int l, unsigned int c) {
   SetWindows(x, y, l, y);
   j = l;// * 2;
   for (i = 0; i < l; i++) {
-      LCD_DATA(c >> 8); 
-      LCD_DATA(c); 
+      LCD_DATA(c >> 8);
+      LCD_DATA(c);
   }
   digitalWrite(LCD_CS, HIGH);
 }
 //***************************************************************************************************************************************
 // Función para dibujar una línea vertical - parámetros ( coordenada x, cordenada y, longitud, color)
-//*************************************************************************************************************************************** 
-void V_line(unsigned int x, unsigned int y, unsigned int l, unsigned int c) {  
+//***************************************************************************************************************************************
+void V_line(unsigned int x, unsigned int y, unsigned int l, unsigned int c) {
   unsigned int i,j;
   LCD_CMD(0x02c); //write_memory_start
   digitalWrite(LCD_RS, HIGH);
@@ -490,10 +535,10 @@ void V_line(unsigned int x, unsigned int y, unsigned int l, unsigned int c) {
   SetWindows(x, y, x, l);
   j = l; //* 2;
   for (i = 1; i <= j; i++) {
-    LCD_DATA(c >> 8); 
+    LCD_DATA(c >> 8);
     LCD_DATA(c);
   }
-  digitalWrite(LCD_CS, HIGH);  
+  digitalWrite(LCD_CS, HIGH);
 }
 //***************************************************************************************************************************************
 // Función para dibujar un rectángulo - parámetros ( coordenada x, cordenada y, ancho, alto, color)
@@ -519,8 +564,8 @@ void Rect(unsigned int x, unsigned int y, unsigned int w, unsigned int h, unsign
 void FillRect(unsigned int x, unsigned int y, unsigned int w, unsigned int h, unsigned int c) {
   LCD_CMD(0x02c); // write_memory_start
   digitalWrite(LCD_RS, HIGH);
-  digitalWrite(LCD_CS, LOW); 
-  
+  digitalWrite(LCD_CS, LOW);
+
   unsigned int x2, y2;
   x2 = x+w;
   y2 = y+h;
@@ -531,20 +576,20 @@ void FillRect(unsigned int x, unsigned int y, unsigned int w, unsigned int h, un
     for (int j = 0; j < h; j++) {
       LCD_DATA(c >> 8);
       LCD_DATA(c);
-      
-      //LCD_DATA(bitmap[k]);    
+
+      //LCD_DATA(bitmap[k]);
       k = k - 2;
-     } 
+     }
   }
   digitalWrite(LCD_CS, HIGH);
 }
 //***************************************************************************************************************************************
-// Función para dibujar texto - parámetros ( texto, coordenada x, cordenada y, color, background) 
+// Función para dibujar texto - parámetros ( texto, coordenada x, cordenada y, color, background)
 //***************************************************************************************************************************************
 void LCD_Print(String text, int x, int y, int fontSize, int color, int background) {
   int fontXSize ;
   int fontYSize ;
-  
+
   if(fontSize == 1){
     fontXSize = fontXSizeSmal ;
     fontYSize = fontYSizeSmal ;
@@ -553,7 +598,7 @@ void LCD_Print(String text, int x, int y, int fontSize, int color, int backgroun
     fontXSize = fontXSizeBig ;
     fontYSize = fontYSizeBig ;
   }
-  
+
   char charInput ;
   int cLength = text.length();
   Serial.println(cLength,DEC);
@@ -592,11 +637,11 @@ void LCD_Print(String text, int x, int y, int fontSize, int color, int backgroun
 //***************************************************************************************************************************************
 // Función para dibujar una imagen a partir de un arreglo de colores (Bitmap) Formato (Color 16bit R 5bits G 6bits B 5bits)
 //***************************************************************************************************************************************
-void LCD_Bitmap(unsigned int x, unsigned int y, unsigned int width, unsigned int height, unsigned char bitmap[]){  
+void LCD_Bitmap(unsigned int x, unsigned int y, unsigned int width, unsigned int height, unsigned char bitmap[]){
   LCD_CMD(0x02c); // write_memory_start
   digitalWrite(LCD_RS, HIGH);
-  digitalWrite(LCD_CS, LOW); 
-  
+  digitalWrite(LCD_CS, LOW);
+
   unsigned int x2, y2;
   x2 = x+width;
   y2 = y+height;
@@ -608,9 +653,9 @@ void LCD_Bitmap(unsigned int x, unsigned int y, unsigned int width, unsigned int
     for (int j = 0; j < height; j++) {
       LCD_DATA(bitmap[k]);
       LCD_DATA(bitmap[k+1]);
-      //LCD_DATA(bitmap[k]);    
+      //LCD_DATA(bitmap[k]);
       k = k + 2;
-     } 
+     }
   }
   digitalWrite(LCD_CS, HIGH);
 }
@@ -620,7 +665,7 @@ void LCD_Bitmap(unsigned int x, unsigned int y, unsigned int width, unsigned int
 void LCD_Sprite(int x, int y, int width, int height, unsigned char bitmap[],int columns, int index, char flip, char offset){
   LCD_CMD(0x02c); // write_memory_start
   digitalWrite(LCD_RS, HIGH);
-  digitalWrite(LCD_CS, LOW); 
+  digitalWrite(LCD_CS, LOW);
 
   unsigned int x2, y2;
   x2 =   x+width;
@@ -636,7 +681,7 @@ void LCD_Sprite(int x, int y, int width, int height, unsigned char bitmap[],int 
       LCD_DATA(bitmap[k]);
       LCD_DATA(bitmap[k+1]);
       k = k - 2;
-     } 
+     }
   }
   }else{
      for (int j = 0; j < height; j++){
@@ -645,10 +690,112 @@ void LCD_Sprite(int x, int y, int width, int height, unsigned char bitmap[],int 
       LCD_DATA(bitmap[k]);
       LCD_DATA(bitmap[k+1]);
       k = k + 2;
-     } 
+     }
   }
-    
-    
+
+
     }
   digitalWrite(LCD_CS, HIGH);
 }
+
+
+void pista(void) {
+
+
+  LCD_Clear(0x00);
+  FillRect(0, 0, 320, 240, 0x00);
+
+  String text5 = "P1";
+  String text6 = "P2";
+  LCD_Bitmap(50, 4, 83, 8, life1);
+  LCD_Bitmap(150, 4, 60, 8, life2);
+  LCD_Bitmap(215, 4, 36, 8, life3);
+  LCD_Bitmap(255, 4, 16, 8, life4);
+  LCD_Print(text5, 48, 4, 1, 0xffff, 0x00);
+
+
+
+
+  //fila de abajo
+  LCD_Bitmap(0, 224, 16, 16, tile);
+  LCD_Bitmap(16, 224, 16, 16, tile);
+  LCD_Bitmap(32, 224, 16, 16, tile);
+  LCD_Bitmap(48, 224, 16, 16, tile);
+  LCD_Bitmap(64, 224, 16, 16, tile);
+  LCD_Bitmap(80, 224, 16, 16, tile);
+  LCD_Bitmap(96, 224, 16, 16, tile);
+  LCD_Bitmap(112, 224, 16, 16, tile);
+  LCD_Bitmap(128, 224, 16, 16, tile);
+  LCD_Bitmap(144, 224, 16, 16, tile);
+  LCD_Bitmap(160, 224, 16, 16, tile);
+  LCD_Bitmap(176, 224, 16, 16, tile);
+  LCD_Bitmap(192, 224, 16, 16, tile);
+  LCD_Bitmap(208, 224, 16, 16, tile);
+  LCD_Bitmap(224, 224, 16, 16, tile);
+  LCD_Bitmap(240, 224, 16, 16, tile);
+  LCD_Bitmap(256, 224, 16, 16, tile);
+  LCD_Bitmap(272, 224, 16, 16, tile);
+  LCD_Bitmap(288, 224, 16, 16, tile);
+  LCD_Bitmap(304, 224, 16, 16, tile);
+  //
+  //fila arriba
+  LCD_Bitmap(0, 16, 16, 16, tile);
+  LCD_Bitmap(16, 16, 16, 16, tile);
+  LCD_Bitmap(32, 16, 16, 16, tile);
+  LCD_Bitmap(48, 16, 16, 16, tile);
+  LCD_Bitmap(64, 16, 16, 16, tile);
+  LCD_Bitmap(80, 16, 16, 16, tile);
+  LCD_Bitmap(96, 16, 16, 16, tile);
+  LCD_Bitmap(112, 16, 16, 16, tile);
+  LCD_Bitmap(128, 16, 16, 16, tile);
+  LCD_Bitmap(144, 16, 16, 16, tile);
+  LCD_Bitmap(160, 16, 16, 16, tile);
+  LCD_Bitmap(176, 16, 16, 16, tile);
+  LCD_Bitmap(192, 16, 16, 16, tile);
+  LCD_Bitmap(208, 16, 16, 16, tile);
+  LCD_Bitmap(224, 16, 16, 16, tile);
+  LCD_Bitmap(240, 16, 16, 16, tile);
+  LCD_Bitmap(256, 16, 16, 16, tile);
+  LCD_Bitmap(272, 16, 16, 16, tile);
+  LCD_Bitmap(288, 16, 16, 16, tile);
+  LCD_Bitmap(304, 16, 16, 16, tile);
+
+
+  //columna izq
+  LCD_Bitmap(0, 16, 16, 16, tile);
+  LCD_Bitmap(0, 32, 16, 16, tile);
+  LCD_Bitmap(0, 48, 16, 16, tile);
+  LCD_Bitmap(0, 64, 16, 16, tile);
+  LCD_Bitmap(0, 80, 16, 16, tile);
+  LCD_Bitmap(0, 96, 16, 16, tile);
+  LCD_Bitmap(0, 112, 16, 16, tile);
+  LCD_Bitmap(0, 128, 16, 16, tile);
+  LCD_Bitmap(0, 144, 16, 16, tile);
+  LCD_Bitmap(0, 160, 16, 16, tile);
+  LCD_Bitmap(0, 176, 16, 16, tile);
+  LCD_Bitmap(0, 192, 16, 16, tile);
+  LCD_Bitmap(0, 208, 16, 16, tile);
+
+  //columna derecha
+  LCD_Bitmap(304, 16, 16, 16, tile);
+  LCD_Bitmap(304, 32, 16, 16, tile);
+  LCD_Bitmap(304, 48, 16, 16, tile);
+  LCD_Bitmap(304, 64, 16, 16, tile);
+  LCD_Bitmap(304, 80, 16, 16, tile);
+  LCD_Bitmap(304, 96, 16, 16, tile);
+  LCD_Bitmap(304, 112, 16, 16, tile);
+  LCD_Bitmap(304, 128, 16, 16, tile);
+  LCD_Bitmap(304, 144, 16, 16, tile);
+  LCD_Bitmap(304, 160, 16, 16, tile);
+  LCD_Bitmap(304, 176, 16, 16, tile);
+  LCD_Bitmap(304, 192, 16, 16, tile);
+  LCD_Bitmap(304, 208, 16, 16, tile);
+
+
+}
+
+
+//  String text = "prueba";
+//
+//  //text, x, y ,tamaño de font, color, background
+//  LCD_Print(text, 1, 0, 1, 0xffff, 0x00);}
