@@ -1,11 +1,4 @@
-//***************************************************************************************************************************************
-/* Librería para el uso de la pantalla ILI9341 en modo 8 bits
-   Basado en el código de martinayotte - https://www.stm32duino.com/viewtopic.php?t=637
-   Adaptación, migración y creación de nuevas funciones: Pablo Mazariegos y José Morales
-   Con ayuda de: José Guerra
-   IE3027: Electrónica Digital 2 - 2019
-*/
-//***************************************************************************************************************************************
+
 #include <stdint.h>
 #include <stdbool.h>
 #include <TM4C123GH6PM.h>
@@ -35,11 +28,23 @@ int x_t1;
 int y_t1;
 int x_b1;
 int y_b1;
+int x_t2;
+int y_t2;
+int x_b2;
+int y_b2;
 
-const int y_limsup = 32;
+int con1 = 0;
+int con2 = 0;
+int con3 = 0;
+int con4 = 0;
+
+int pos_t1[17][17];
+int pos_t2[17][17];
+
+const int y_limsup = 31;
 const int y_liminf = 224;
 const int x_limsup = 287;
-const int x_liminf = 16;
+const int x_liminf = 15;
 
 int flag_orient;
 int disparo_vertU;
@@ -47,6 +52,13 @@ int disparo_vertA;
 int disparo_horI;
 int disparo_horD;
 int disparo_activo;
+
+int flag_orient2;
+int disparo_vertU2;
+int disparo_vertA2;
+int disparo_horI2;
+int disparo_horD2;
+int disparo_activo2;
 
 uint8_t BO1;
 uint8_t BO2;
@@ -87,6 +99,7 @@ void LCD_Sprite(int x, int y, int width, int height, unsigned char bitmap[], int
 void pista(void);
 void ini(void);
 void gameover(void);
+void ploteo(int origenx, int origeny, int origenx2, int origeny2, int dir);
 //Indice de la imagen, 0, 0
 
 extern uint8_t fondo[];
@@ -97,6 +110,7 @@ void setup() {
   Serial3.begin(9600);
   SysCtlClockSet(SYSCTL_SYSDIV_2_5 | SYSCTL_USE_PLL | SYSCTL_OSC_MAIN | SYSCTL_XTAL_16MHZ);
   Serial.begin(9600);
+
   GPIOPadConfigSet(GPIO_PORTB_BASE, 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7, GPIO_STRENGTH_8MA, GPIO_PIN_TYPE_STD_WPU);
   Serial2.begin(9600);
   pinMode(PF_4, INPUT_PULLUP);
@@ -117,8 +131,6 @@ void setup() {
   //x1,y1,x2,y2
   FillRect(0, 0, 319, 206, 0x00);
 
-
-
   String text1 = "MONSTRU INC.";
   String text2 = "&";
   String text3 = "CUE CORP.";
@@ -126,7 +138,7 @@ void setup() {
   LCD_Print(text1, 0, 100, 2, 0xffff, 0x00);
   LCD_Print(text2, 0, 120, 2, 0xffff, 0x00);
   LCD_Print(text3, 0, 140, 2, 0xffff, 0x00);
-  delay (3000);
+  delay (100);
 
   LCD_Clear(0x00);
 
@@ -155,22 +167,14 @@ void setup() {
   disparo_horD = 0;
   disparo_activo = 0;
   flag_orient = 0;
-  /*LCD_Bitmap(x_t1, y_t1, 15, 17, tanque2_1);
-    LCD_Bitmap(100, 110, 10, 8, balazo);
-    /* LCD_Bitmap(30, 10, 17, 15, tanque2_2);
-    LCD_Bitmap(60, 10, 17, 15, tanque2_3);
-    LCD_Bitmap(80, 10, 15, 17, tanque2_4);
-    LCD_Bitmap(97, 10, 10, 8, misil1);*/
+  disparo_vertU2 = 0;
+  disparo_vertA2 = 0;
+  disparo_horI2 = 0;
+  disparo_horD2 = 0;
+  disparo_activo2 = 0;
+  flag_orient2 = 0;
 
-  /*
-    for(int x = 0; x <319; x++){
-      LCD_Bitmap(x, 52, 16, 16, tile2);
-      LCD_Bitmap(x, 68, 16, 16, tile);
 
-      LCD_Bitmap(x, 207, 16, 16, tile);
-      LCD_Bitmap(x, 223, 16, 16, tile);
-      x += 15;
-    }*/
 
 }
 //***************************************************************************************************************************************
@@ -259,12 +263,10 @@ void loop() {
 
     }
   }
-
   if (FLAG2 == 1) {
     if (BO5 == LOW) {
       FLAGO4 = 1;
     }
-
     if (FLAGO4 == 1 && BO5 == HIGH) {
       FLAGO4 = 0;
       entrada = 52;
@@ -306,152 +308,212 @@ void loop() {
     }
 
   }
+    //*****************************Matrices de espacio ocupado*********************************
+    ploteo(x_t1, y_t1, x_t2, y_t2, flag_orient);
 
-//***************************************************************************************************************************************
-//ORIENTACION
-//***************************************************************************************************************************************
-
-  if (entrada == 48 && flag_orient == 0) {
-    entrada = 0;
-    FillRect(x_t1, y_t1, 15, 17, 0);
-    y_t1 -= 5;
-    if (y_t1 <= y_limsup) {
-      y_t1 += 5;
-      LCD_Bitmap(x_t1, y_t1, 15, 17, tanque2_1);
-    }
-    else {
-      LCD_Bitmap(x_t1, y_t1, 15, 17, tanque2_1);
-    }
-  }
-  else if (entrada == 48 && flag_orient == 1) {
-    entrada = 0;
-    FillRect(x_t1, y_t1, 17, 15, 0);
-    x_t1 += 5;
-    if (x_t1 >= x_limsup) {
-      x_t1 -= 5;
-      LCD_Bitmap(x_t1, y_t1, 17, 15, tanque2_2);
-    }
-    else {
-      LCD_Bitmap(x_t1, y_t1, 17, 15, tanque2_2);
-    }
-  }
-  else if (entrada == 48 && flag_orient == 2) {
-    entrada = 0;
-    FillRect(x_t1, y_t1, 17, 15, 0);
-    x_t1 -= 5;
-    if (x_t1 <= x_liminf) {
-      x_t1 += 5;
-      LCD_Bitmap(x_t1, y_t1, 17, 15, tanque2_3);
-    }
-    else {
-      LCD_Bitmap(x_t1, y_t1, 17, 15, tanque2_3);
-    }
-  }
-  else if (entrada == 48 && flag_orient == 3) {
-    entrada = 0;
-    FillRect(x_t1, y_t1, 15, 17, 0);
-    y_t1 += 5;
-    if (y_t1 >= y_liminf) {
+    //***********************Movimiento***************************************
+   //************************Bloque1Movimiento********************************
+    if (entrada == 48 && flag_orient == 0 && con3 == 0) {
+      FillRect(x_t1, y_t1, 15, 17, 0);
       y_t1 -= 5;
-      LCD_Bitmap(x_t1, y_t1, 15, 17, tanque2_4);
+      if (y_t1 <= y_limsup) {
+        y_t1 += 5;
+        LCD_Bitmap(x_t1, y_t1, 15, 17, tanque2_1);
+      }
+      else {
+        LCD_Bitmap(x_t1, y_t1, 15, 17, tanque2_1);
+      }
     }
-    else {
-      LCD_Bitmap(x_t1, y_t1, 15, 17, tanque2_4);
+    //************************Bloque2Movimiento********************************
+    else if (entrada == 48 && flag_orient == 1 && con2 == 0) {
+      FillRect(x_t1, y_t1, 17, 15, 0);
+      x_t1 += 5;
+      if (x_t1 >= x_limsup) {
+        x_t1 -= 5;
+        LCD_Bitmap(x_t1, y_t1, 17, 15, tanque2_2);
+      }
+      else {
+        LCD_Bitmap(x_t1, y_t1, 17, 15, tanque2_2);
+      }
     }
-  }
-  //***********************CambiosDeDireccion***************************************
-  else if (entrada == 49) {
-    entrada = 0;
-    FillRect(x_t1, y_t1, 17, 17, 0);
-    LCD_Bitmap(x_t1, y_t1, 15, 17, tanque2_1);
-    flag_orient = 0;
-  }
-  else if (entrada == 50) {
-    entrada = 0;
-    FillRect(x_t1, y_t1, 17, 17, 0);
-    LCD_Bitmap(x_t1, y_t1, 17, 15, tanque2_2);
-    flag_orient = 1;
-  }
-  else if (entrada == 51) {
-    entrada = 0;
-    FillRect(x_t1, y_t1, 17, 17, 0);
-    LCD_Bitmap(x_t1, y_t1, 17, 15, tanque2_3);
-    flag_orient = 2;
-  }
-  else if (entrada == 52) {
-    entrada = 0;
-    FillRect(x_t1, y_t1, 17, 17, 0);
-    LCD_Bitmap(x_t1, y_t1, 15, 17, tanque2_4);
-    flag_orient = 3;
-  }
-//***************************************************************************************************************************************
-// DISPARO
-//***************************************************************************************************************************************
+    //************************Bloque3Movimiento*************************************
+    else if (entrada == 48 && flag_orient == 2 && con1 == 0) {
+      FillRect(x_t1, y_t1, 17, 15, 0);
+      x_t1 -= 5;
+      if (x_t1 <= x_liminf) {
+        x_t1 += 5;
+        LCD_Bitmap(x_t1, y_t1, 17, 15, tanque2_3);
+      }
+      else {
+        LCD_Bitmap(x_t1, y_t1, 17, 15, tanque2_3);
+      }
+    }
+    //************************Bloque4Movimiento********************************
+    else if (entrada == 48 && flag_orient == 3 && con4 == 0) {
+      FillRect(x_t1, y_t1, 15, 17, 0);
+      y_t1 += 5;
+      if (y_t1 >= (y_liminf - 17)) {
+        y_t1 -= 5;
+        LCD_Bitmap(x_t1, y_t1, 15, 17, tanque2_4);
+      }
+      else {
+        LCD_Bitmap(x_t1, y_t1, 15, 17, tanque2_4);
+      }
+    }
+    //***********************CambiosDeDireccion***************************************
+   //************************Bloque1Direccion********************************
+    else if (entrada == 49) {
+      FillRect(x_t1, y_t1, 17, 17, 0);
+      LCD_Bitmap(x_t1, y_t1, 15, 17, tanque2_1);
+      flag_orient = 0;
+    }
+    //************************Bloque2Direccion********************************
+    else if (entrada == 50) {
+      FillRect(x_t1, y_t1, 17, 17, 0);
+      LCD_Bitmap(x_t1, y_t1, 17, 15, tanque2_2);
+      flag_orient = 1;
+    }
+    //************************Bloque3Direccion********************************
+    else if (entrada == 51) {
+      FillRect(x_t1, y_t1, 17, 17, 0);
+      LCD_Bitmap(x_t1, y_t1, 17, 15, tanque2_3);
+      flag_orient = 2;
+    }
+    //************************Bloque4Direccion********************************
+    else if (entrada == 52) {
+      FillRect(x_t1, y_t1, 17, 17, 0);
+      LCD_Bitmap(x_t1, y_t1, 15, 17, tanque2_4);
+      flag_orient = 3;
+    }
+    //***********************Disparo***************************************
+    //************************Bloque1Disparo********************************
+    if ((entrada == 53 ) && ((flag_orient == 0) && (disparo_activo == 0))) {
+      disparo_vertU = 1;
+      disparo_vertA = 0;
+      disparo_horI = 0;
+      disparo_horD = 0;
 
-  if ((entrada == 53 ) && ((flag_orient == 0) && (disparo_activo == 0))) {
-    entrada = 0;
-    disparo_vertU = 1;
-    disparo_vertA = 0;
-    disparo_horI = 0;
-    disparo_horD = 0;
-
-    if ((y_t1 - 12) >= y_limsup) {
+      if ((y_t1 - 12) >= y_limsup) {
+        disparo_activo = 1;
+        LCD_Bitmap((x_t1 + 4), (y_t1 - 12), 8, 10, balazo_v);
+        x_b1 = x_t1 + 4;
+        y_b1 = y_t1 - 12;
+      }
+      else {
+        disparo_activo = 0;
+      }
+    }
+    //************************Bloque2Disparo********************************
+    else if ((entrada == 53 ) && ((flag_orient == 1) && (disparo_activo == 0))) {
+      disparo_vertU = 0;
+      disparo_vertA = 0;
+      disparo_horI = 0;
+      disparo_horD = 1;
       disparo_activo = 1;
-      LCD_Bitmap((x_t1 + 4), (y_t1 - 12), 8, 10, balazo_v);
-      x_b1 = x_t1 + 4;
-      y_b1 = y_t1 - 12;
+
+      if ((x_t1 + 19) <= x_limsup) {
+        disparo_activo = 1;
+        LCD_Bitmap((x_t1 + 18), (y_t1 + 4), 10, 8, balazo);
+        x_b1 = x_t1 + 18;
+        y_b1 = y_t1 + 4;
+      }
+      else {
+        disparo_activo = 0;
+      }
+
     }
-    else {
-      disparo_activo = 0;
+    //************************Bloque3Disparo********************************
+    else if ((entrada == 53 ) && ((flag_orient == 2) && (disparo_activo == 0))) {
+      disparo_vertU = 0;
+      disparo_vertA = 0;
+      disparo_horI = 1;
+      disparo_horD = 0;
+      disparo_activo = 1;
+
+      if ((x_t1 - 12) <= x_limsup) {
+        disparo_activo = 1;
+        LCD_Bitmap((x_t1 - 12), (y_t1 + 4), 10, 8, balazo);
+        x_b1 = x_t1 - 12;
+        y_b1 = y_t1 + 4;
+      }
+      else {
+        disparo_activo = 0;
+      }
+//************************Bloque4Disparo********************************
     }
-  }
-  else if ((entrada == 53 ) && ((flag_orient == 1) && (disparo_activo == 0))) {
-    entrada = 0;
-    disparo_vertU = 0;
-    disparo_vertA = 1;
-    disparo_horI = 0;
-    disparo_horD = 0;
-    disparo_activo = 1;
-    LCD_Bitmap((x_t1 + 19), (y_t1 + 4), 10, 8, balazo);
-  }
-  else if ((entrada == 53 ) && ((flag_orient == 2) && (disparo_activo == 0))) {
-    disparo_vertU = 0;
-    disparo_vertA = 0;
-    disparo_horI = 1;
-    disparo_horD = 0;
-    disparo_activo = 1;
-    LCD_Bitmap((x_t1 - 12), (y_t1 + 4), 10, 8, balazo);
-  }
-  else if ((entrada == 53 ) && ((flag_orient == 3) && (disparo_activo == 0))) {
-    entrada = 0;
-    disparo_vertU = 0;
-    disparo_vertA = 0;
-    disparo_horI = 0;
-    disparo_horD = 1;
-    disparo_activo = 1;
-    LCD_Bitmap((x_t1 + 4), (y_t1 + 17), 8, 10, balazo_v);
-  }
-//***************************************************************************************************************************************
-// AVANCE DISPARO
-//***************************************************************************************************************************************
+    else if ((entrada == 53 ) && ((flag_orient == 3) && (disparo_activo == 0))) {
+      disparo_vertU = 0;
+      disparo_vertA = 1;
+      disparo_horI = 0;
+      disparo_horD = 0;
+      disparo_activo = 1;
 
-  if ((disparo_activo == 1) && (disparo_vertU == 1)) {
-    FillRect(x_b1, y_b1, 8, 10, 0);
-    y_b1 -= 5;
-    if (y_b1 >= y_limsup) {
-
-
-      LCD_Bitmap((x_b1), (y_b1), 8, 10, balazo_v);
-      delay(100);
+      if ((y_t1 + 27) <= y_liminf) {
+        disparo_activo = 1;
+        LCD_Bitmap((x_t1 + 4), (y_t1 + 18), 8, 10, balazo_v);
+        x_b1 = x_t1 + 4;
+        y_b1 = y_t1 + 18;
+      }
+      else {
+        disparo_activo = 0;
+      }
     }
-    else {
-      disparo_activo = 0;
+    //------->Avance Disparo
+    //************************Bloque1AvanceDisparo********************************
+    if ((disparo_activo == 1) && (disparo_vertU == 1)) {
+      FillRect(x_b1, y_b1, 8, 10, 0);
+      y_b1 -= 5;
+      if (y_b1 >= y_limsup) {
+        LCD_Bitmap((x_b1), (y_b1), 8, 10, balazo_v);
+        delay(100);
+      }
+      else {
+        disparo_activo = 0;
+      }
     }
 
-  }
+    //************************Bloque2AvanceDisparo********************************
+    else if ((disparo_activo == 1) && (disparo_horD == 1)) {
+      FillRect(x_b1, y_b1, 10, 8, 0);
+      x_b1 += 5;
+      if (x_b1 <= (x_limsup + 10)) {
+        LCD_Bitmap((x_b1), (y_b1), 10, 8, balazo);
+        delay(100);
+      }
+      else {
+        disparo_activo = 0;
+      }
 
+    }
+    //************************Bloque3AvanceDisparo********************************
+    else if ((disparo_activo == 1) && (disparo_horI == 1)) {
+      FillRect(x_b1, y_b1, 10, 8, 0);
+      x_b1 -= 5;
+      if (x_b1 >= (x_liminf)) {
+        LCD_Bitmap((x_b1), (y_b1), 10, 8, balazo);
+        delay(100);
+      }
+      else {
+        disparo_activo = 0;
+      }
+
+    }
+    //************************Bloque4AvanceDisparo********************************
+    else if ((disparo_activo == 1) && (disparo_vertA == 1)) {
+      FillRect(x_b1, y_b1, 8, 10, 0);
+      y_b1 += 5;
+      if (y_b1 <= (y_liminf - 10)) {
+        LCD_Bitmap((x_b1), (y_b1), 8, 10, balazo_v);
+        delay(100);
+      }
+      else {
+        disparo_activo = 0;
+      }
+
+    }
 
 }
+
 
 
 //***************************************************************************************************************************************
@@ -659,15 +721,6 @@ void Rect(unsigned int x, unsigned int y, unsigned int w, unsigned int h, unsign
 //***************************************************************************************************************************************
 // Función para dibujar un rectángulo relleno - parámetros ( coordenada x, cordenada y, ancho, alto, color)
 //***************************************************************************************************************************************
-/*void FillRect(unsigned int x, unsigned int y, unsigned int w, unsigned int h, unsigned int c) {
-  unsigned int i;
-  for (i = 0; i < h; i++) {
-    H_line(x  , y  , w, c);
-    H_line(x  , y+i, w, c);
-  }
-  }
-*/
-
 void FillRect(unsigned int x, unsigned int y, unsigned int w, unsigned int h, unsigned int c) {
   LCD_CMD(0x02c); // write_memory_start
   digitalWrite(LCD_RS, HIGH);
@@ -903,7 +956,8 @@ void pista(void) {
   LCD_Bitmap(304, 208, 16, 16, tile);
 
   LCD_Bitmap(x_t1, y_t1, 15, 17, tanque2_1);
-  LCD_Bitmap(100, 110, 10, 8, balazo);
+  LCD_Bitmap(x_t2, y_t2, 15, 17, tanque1_1);
+
   FLAG = 0;
   FLAG2 = 1;
   Serial2.println(6, DEC);
@@ -947,7 +1001,54 @@ void gameover(void) {
   FLAG3 = 1;
 }
 
-//  String text = "prueba";
-//
-//  //text, x, y ,tamaño de font, color, background
-//  LCD_Print(text, 1, 0, 1, 0xffff, 0x00);}
+//*****************************Matrices de espacio ocupado*********************************
+void ploteo(int origenx, int origeny, int origenx2, int origeny2, int dir) {
+
+  int origenx_k = origenx + 17;
+  int origeny_k = origeny + 17;
+  int origenx_D = origenx_k + 5;
+  int origeny_A = origeny_k + 5;
+  int origenx_I = origenx - 5;
+  int origeny_U = origeny - 5;
+  int matx2[17];
+  int maty2[17];
+  int matx[17];
+  int maty[17];
+
+
+
+    if (dir == 1) {
+      if ((((origeny+17)>origeny2)&&((origeny)<(origeny2+17)))&&(((origenx+22)>origenx2)&&((origenx+22)<(origenx2+17)))) {
+
+        con2 = 1;
+      }
+      else {
+        con2=0;
+      }
+    }
+    else if(dir==2){
+      if((((origeny+17)>origeny2)&&((origeny)<(origeny2+17)))&&(((origenx-5)<origenx2+17)&&((origenx-5)>(origenx2)))){
+        con1=1;
+      }
+      else{
+        con1=0;
+      }
+    }
+    else if(dir==3){
+      if((((origenx+17)>origenx2)&&((origenx)<(origenx2+17)))&&(((origeny+22)>origeny2)&&((origeny+22)<(origeny2+17)))){
+        con4=1;
+      }
+      else{
+        con4=0;
+      }
+    }
+    else if(dir==0){
+      if((((origenx+17)>origenx2)&&((origenx)<(origenx2+17)))&&(((origeny-5)>origeny2)&&((origeny-5)<(origeny2+17)))){
+        con3=1;
+      }
+      else{
+        con3=0;
+      }
+    }
+
+}

@@ -1,10 +1,10 @@
 #include <ESP32Servo.h>
 
-/* 
-  Song of storms - Legend of Zelda 
+/*
+  Song of storms - Legend of Zelda
   Connect a piezo buzzer or speaker to pin 11 or select a new pin.
-  More songs available at https://github.com/robsoncouto/arduino-songs                                            
-                                              
+  More songs available at https://github.com/robsoncouto/arduino-songs
+
                                               Robson Couto, 2019
 */
 #define NOTE_B0  31
@@ -110,10 +110,10 @@ int buzzer = 22;
 // !!negative numbers are used to represent dotted notes,
 // so -4 means a dotted quarter note, that is, a quarter plus an eighteenth!!
 int melody[] = {
-  
-  // Song of storms - The Legend of Zelda Ocarina of Time. 
+
+  // Song of storms - The Legend of Zelda Ocarina of Time.
   // Score available at https://musescore.com/user/4957541/scores/1545401
-  
+
   NOTE_C3,4, REST,4, REST,4, NOTE_E3,4, REST,4, NOTE_G3,4, NOTE_A3,4, NOTE_G3,4,
   NOTE_C3,4, REST,4, REST,4, NOTE_E3,4, REST,4, NOTE_G3,4, NOTE_A3,4, NOTE_G3,4,
   NOTE_C3,4, REST,4, REST,4, NOTE_E3,4, REST,4, NOTE_G3,4, NOTE_A3,4, NOTE_G3,4,
@@ -133,14 +133,13 @@ int wholenote = (60000 * 4) / tempo;
 int divider = 0, noteDuration = 0;
 
 void setup() {
-  // iterate over the notes of the melody. 
+  // iterate over the notes of the melody.
   // Remember, the array is twice the number of notes (notes + durations)
 
 }
 
 void loop() {
-
-   for (int thisNote = 0; thisNote < notes * 2; thisNote = thisNote + 2) {
+    for (int thisNote = 0; thisNote < notes * 2; thisNote = thisNote + 2) {
 
     // calculates the duration of each note
     divider = melody[thisNote + 1];
@@ -157,11 +156,9 @@ void loop() {
     tone(buzzer, melody[thisNote], noteDuration*0.9);
 
     // Wait for the specief duration before playing the next note.
-    
-    
+
+
     // stop the waveform generation before the next note.
     noTone(buzzer);
   }
-
-
 }
