@@ -161,6 +161,8 @@ void setup() {
   //LCD_Bitmap(unsigned int x, unsigned int y, unsigned int width, unsigned int height, unsigned char bitmap[]);
   x_t1 = 80;
   y_t1 = 100;
+  x_t2 = 160;
+  y_t2 = 100;
   disparo_vertU = 0;
   disparo_vertA = 0;
   disparo_horI = 0;
@@ -314,6 +316,7 @@ void loop() {
     //***********************Movimiento***************************************
    //************************Bloque1Movimiento********************************
     if (entrada == 48 && flag_orient == 0 && con3 == 0) {
+      entrada=0;
       FillRect(x_t1, y_t1, 15, 17, 0);
       y_t1 -= 5;
       if (y_t1 <= y_limsup) {
@@ -326,6 +329,7 @@ void loop() {
     }
     //************************Bloque2Movimiento********************************
     else if (entrada == 48 && flag_orient == 1 && con2 == 0) {
+      entrada=0;
       FillRect(x_t1, y_t1, 17, 15, 0);
       x_t1 += 5;
       if (x_t1 >= x_limsup) {
@@ -338,6 +342,7 @@ void loop() {
     }
     //************************Bloque3Movimiento*************************************
     else if (entrada == 48 && flag_orient == 2 && con1 == 0) {
+      entrada=0;
       FillRect(x_t1, y_t1, 17, 15, 0);
       x_t1 -= 5;
       if (x_t1 <= x_liminf) {
@@ -350,6 +355,7 @@ void loop() {
     }
     //************************Bloque4Movimiento********************************
     else if (entrada == 48 && flag_orient == 3 && con4 == 0) {
+      entrada=0;
       FillRect(x_t1, y_t1, 15, 17, 0);
       y_t1 += 5;
       if (y_t1 >= (y_liminf - 17)) {
@@ -363,24 +369,28 @@ void loop() {
     //***********************CambiosDeDireccion***************************************
    //************************Bloque1Direccion********************************
     else if (entrada == 49) {
+      entrada=0;
       FillRect(x_t1, y_t1, 17, 17, 0);
       LCD_Bitmap(x_t1, y_t1, 15, 17, tanque2_1);
       flag_orient = 0;
     }
     //************************Bloque2Direccion********************************
     else if (entrada == 50) {
+      entrada=0;
       FillRect(x_t1, y_t1, 17, 17, 0);
       LCD_Bitmap(x_t1, y_t1, 17, 15, tanque2_2);
       flag_orient = 1;
     }
     //************************Bloque3Direccion********************************
     else if (entrada == 51) {
+      entrada=0;
       FillRect(x_t1, y_t1, 17, 17, 0);
       LCD_Bitmap(x_t1, y_t1, 17, 15, tanque2_3);
       flag_orient = 2;
     }
     //************************Bloque4Direccion********************************
     else if (entrada == 52) {
+      entrada=0;
       FillRect(x_t1, y_t1, 17, 17, 0);
       LCD_Bitmap(x_t1, y_t1, 15, 17, tanque2_4);
       flag_orient = 3;
@@ -388,6 +398,7 @@ void loop() {
     //***********************Disparo***************************************
     //************************Bloque1Disparo********************************
     if ((entrada == 53 ) && ((flag_orient == 0) && (disparo_activo == 0))) {
+      entrada=0;
       disparo_vertU = 1;
       disparo_vertA = 0;
       disparo_horI = 0;
@@ -405,6 +416,7 @@ void loop() {
     }
     //************************Bloque2Disparo********************************
     else if ((entrada == 53 ) && ((flag_orient == 1) && (disparo_activo == 0))) {
+      entrada=0;
       disparo_vertU = 0;
       disparo_vertA = 0;
       disparo_horI = 0;
@@ -424,6 +436,7 @@ void loop() {
     }
     //************************Bloque3Disparo********************************
     else if ((entrada == 53 ) && ((flag_orient == 2) && (disparo_activo == 0))) {
+      entrada=0;
       disparo_vertU = 0;
       disparo_vertA = 0;
       disparo_horI = 1;
@@ -442,6 +455,7 @@ void loop() {
 //************************Bloque4Disparo********************************
     }
     else if ((entrada == 53 ) && ((flag_orient == 3) && (disparo_activo == 0))) {
+      entrada=0;
       disparo_vertU = 0;
       disparo_vertA = 1;
       disparo_horI = 0;
