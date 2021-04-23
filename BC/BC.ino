@@ -1,11 +1,4 @@
-//***************************************************************************************************************************************
-/* Librería para el uso de la pantalla ILI9341 en modo 8 bits
-   Basado en el código de martinayotte - https://www.stm32duino.com/viewtopic.php?t=637
-   Adaptación, migración y creación de nuevas funciones: Pablo Mazariegos y José Morales
-   Con ayuda de: José Guerra
-   IE3027: Electrónica Digital 2 - 2019
-*/
-//***************************************************************************************************************************************
+
 #include <stdint.h>
 #include <stdbool.h>
 #include <TM4C123GH6PM.h>
@@ -158,15 +151,6 @@ void setup() {
   disparo_activo2 = 0;
   flag_orient2 = 0;
 
-  /*
-    for(int x = 0; x <319; x++){
-      LCD_Bitmap(x, 52, 16, 16, tile2);
-      LCD_Bitmap(x, 68, 16, 16, tile);
-
-      LCD_Bitmap(x, 207, 16, 16, tile);
-      LCD_Bitmap(x, 223, 16, 16, tile);
-      x += 15;
-    }*/
 
 
 }
@@ -381,54 +365,6 @@ void loop() {
   
 }
 
-/* for(int x = 0; x <320-32; x++){
-   delay(15);
-   int anim2 = (x/35)%2;
-
-   LCD_Sprite(x,100,16,24,planta,2,anim2,0,1);
-   V_line( x -1, 100, 24, 0x421b);
-
-   //LCD_Bitmap(x, 100, 32, 32, prueba);
-
-   int anim = (x/11)%8;
-
-
-   int anim3 = (x/11)%4;
-
-   LCD_Sprite(x, 20, 16, 32, mario,8, anim,1, 0);
-   V_line( x -1, 20, 32, 0x421b);
-
-   //LCD_Sprite(x,100,32,32,bowser,4,anim3,0,1);
-   //V_line( x -1, 100, 32, 0x421b);
-
-
-   LCD_Sprite(x, 140, 16, 16, enemy,2, anim2,1, 0);
-   V_line( x -1, 140, 16, 0x421b);
-
-   LCD_Sprite(x, 175, 16, 32, luigi,8, anim,1, 0);
-   V_line( x -1, 175, 32, 0x421b);
-  }
-  for(int x = 320-32; x >0; x--){
-   delay(5);
-   int anim = (x/11)%8;
-   int anim2 = (x/11)%2;
-
-   LCD_Sprite(x,100,16,24,planta,2,anim2,0,0);
-   V_line( x + 16, 100, 24, 0x421b);
-
-   //LCD_Bitmap(x, 100, 32, 32, prueba);
-
-   //LCD_Sprite(x, 140, 16, 16, enemy,2, anim2,0, 0);
-   //V_line( x + 16, 140, 16, 0x421b);
-
-   //LCD_Sprite(x, 175, 16, 32, luigi,8, anim,0, 0);
-   //V_line( x + 16, 175, 32, 0x421b);
-
-   //LCD_Sprite(x, 20, 16, 32, mario,8, anim,0, 0);
-   //V_line( x + 16, 20, 32, 0x421b);
-  }
-*/
-
 //***************************************************************************************************************************************
 // Función para inicializar LCD
 //***************************************************************************************************************************************
@@ -634,15 +570,6 @@ void Rect(unsigned int x, unsigned int y, unsigned int w, unsigned int h, unsign
 //***************************************************************************************************************************************
 // Función para dibujar un rectángulo relleno - parámetros ( coordenada x, cordenada y, ancho, alto, color)
 //***************************************************************************************************************************************
-/*void FillRect(unsigned int x, unsigned int y, unsigned int w, unsigned int h, unsigned int c) {
-  unsigned int i;
-  for (i = 0; i < h; i++) {
-    H_line(x  , y  , w, c);
-    H_line(x  , y+i, w, c);
-  }
-  }
-*/
-
 void FillRect(unsigned int x, unsigned int y, unsigned int w, unsigned int h, unsigned int c) {
   LCD_CMD(0x02c); // write_memory_start
   digitalWrite(LCD_RS, HIGH);
@@ -876,21 +803,6 @@ void pista(void) {
   LCD_Bitmap(x_t1, y_t1, 15, 17, tanque2_1);
   LCD_Bitmap(x_t2, y_t2, 15, 17, tanque1_1);
 
-  /* LCD_Bitmap(30, 10, 17, 15, tanque2_2);
-    LCD_Bitmap(60, 10, 17, 15, tanque2_3);
-    LCD_Bitmap(80, 10, 15, 17, tanque2_4);
-    LCD_Bitmap(97, 10, 10, 8, misil1);*/
-
-  /*
-    for(int x = 0; x <319; x++){
-      LCD_Bitmap(x, 52, 16, 16, tile2);
-      LCD_Bitmap(x, 68, 16, 16, tile);
-
-      LCD_Bitmap(x, 207, 16, 16, tile);
-      LCD_Bitmap(x, 223, 16, 16, tile);
-      x += 15;
-
-    }*/
 }
 
 //*****************************Matrices de espacio ocupado*********************************
