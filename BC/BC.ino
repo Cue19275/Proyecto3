@@ -30,7 +30,9 @@
 #define LCD_WR PD_3
 #define LCD_RD PE_1
 int DPINS[] = {PB_0, PB_1, PB_2, PB_3, PB_4, PB_5, PB_6, PB_7};
+
 int entrada;
+int entrada2;
 int x_t1;
 int y_t1;
 int x_b1;
@@ -55,6 +57,12 @@ uint8_t BO4;
 uint8_t BO5;
 uint8_t BO6;
 uint8_t BO7; //SOLO ES DE PRUEBA QUITAR DESPUES
+uint8_t BO8;
+uint8_t BO9;
+uint8_t BO10;
+uint8_t BO11;
+uint8_t BO12;
+uint8_t BO13;
 uint8_t fon;
 uint8_t fon1;
 uint8_t FLAG;
@@ -67,6 +75,11 @@ uint8_t FLAGO3;
 uint8_t FLAGO4;
 uint8_t FLAGO5;
 uint8_t FLAGO6;
+uint8_t FLAGO7;
+uint8_t FLAGO8;
+uint8_t FLAGO9;
+uint8_t FLAGO10;
+uint8_t FLAGO11;
 uint8_t FINAL;
 
 //***************************************************************************************************************************************
@@ -106,8 +119,11 @@ void setup() {
   pinMode(PE_3, INPUT_PULLUP);
   pinMode(PE_5, INPUT_PULLUP);
   pinMode(PF_3, INPUT_PULLUP);
-  pinMode(PC_4, INPUT);
-  pinMode(PC_5, OUTPUT);
+  pinMode(PF_2, INPUT_PULLUP);
+  pinMode(PC_4, INPUT_PULLUP);
+  pinMode(PC_5, INPUT_PULLUP);
+  pinMode(PC_6, INPUT_PULLUP);
+  pinMode(PC_7, INPUT_PULLUP);
 
 
 
@@ -178,6 +194,7 @@ void setup() {
 //***************************************************************************************************************************************
 void loop() {
 
+<<<<<<< Updated upstream
   BO1 = digitalRead(PA_7);
   BO2 = digitalRead(PA_6);
   BO3 = digitalRead(PF_4);
@@ -185,6 +202,32 @@ void loop() {
   BO5 = digitalRead(PE_5);
   BO6 = digitalRead(PE_3);
   BO7 = digitalRead(PF_3);
+=======
+  //***************************************************************************************************************************************
+  // BOTONES
+  //***************************************************************************************************************************************
+
+  //P1
+  BO1 = digitalRead(PA_7);//AVANZAR
+  BO2 = digitalRead(PA_6);//ARRIBA
+  BO3 = digitalRead(PF_4);//DERECBA
+  BO4 = digitalRead(PF_1);//IZQUIERDA
+  BO5 = digitalRead(PE_5);//ABAJO
+  BO6 = digitalRead(PE_3);//DISPARAR
+  //BO7 = digitalRead(PF_3);
+
+  //P2
+  BO8 = digitalRead(PC_4);//IZQUIERDA
+  BO9 = digitalRead(PC_5);//DERECHA
+  BO10 = digitalRead(PC_6);//ARRIBA
+  BO11 = digitalRead(PC_7);//ABAJO
+  BO12 = digitalRead(PF_2);//DISPARO
+  BO13 = digitalRead(PF_3);//AVANZAR
+
+
+
+  //TRANSICION DE PORTADA
+>>>>>>> Stashed changes
   if (FLAG == 1) {
     if (BO1 == LOW) {
       fon = 1;
@@ -193,8 +236,19 @@ void loop() {
       fon = 0;
       pista();
     }
-
   }
+
+  //TRANSICION DE GAME OVER
+  if (FLAG3 == 1) {
+    if (BO2 == LOW) {
+      fon1 = 1;
+    }
+    if (fon1 == 1 && BO2 == HIGH) {
+      fon1 = 0;
+      ini();
+    }
+  }
+
 
   /*for (int x = 0; x<6; x++){
     if(x == 6){
@@ -204,8 +258,16 @@ void loop() {
     LCD_Sprite(30, 30, 17, 17, explo, 6, x, 0, 0);*/
 
 
+<<<<<<< Updated upstream
 
   //***********************Movimiento***************************************
+=======
+  //****************************************************************************************************************
+  //BOTONES P1
+  //****************************************************************************************************************
+
+  //AVANZAR P1
+>>>>>>> Stashed changes
   if (FLAG2 == 1) {
     if (BO1 == LOW) {
       FLAGO = 1;
@@ -214,10 +276,10 @@ void loop() {
     if (FLAGO == 1 && BO1 == HIGH) {
       FLAGO = 0;
       entrada = 48;
-
     }
   }
 
+  //ARRIBA P1
   if (FLAG2 == 1) {
     if (BO2 == LOW) {
       FLAGO1 = 1;
@@ -230,6 +292,8 @@ void loop() {
     }
   }
 
+
+  //DERECHA P1
   if (FLAG2 == 1) {
     if (BO3 == LOW) {
       FLAGO2 = 1;
@@ -242,6 +306,7 @@ void loop() {
     }
   }
 
+  //IZQUIERDA P1
   if (FLAG2 == 1) {
     if (BO4 == LOW) {
       FLAGO3 = 1;
@@ -254,6 +319,10 @@ void loop() {
     }
   }
 
+<<<<<<< Updated upstream
+=======
+  //ABAJO P1
+>>>>>>> Stashed changes
   if (FLAG2 == 1) {
     if (BO5 == LOW) {
       FLAGO4 = 1;
@@ -266,6 +335,7 @@ void loop() {
     }
   }
 
+  //DISPARO P1
   if (FLAG2 == 1) {
     if (BO6 == LOW) {
       FLAGO5 = 1;
@@ -278,31 +348,117 @@ void loop() {
     }
   }
 
-   if (FLAG2 == 1) {
-    if (BO7 == LOW) {
+  //****************************************************************************************************************
+  //BOTONES P2
+  //****************************************************************************************************************
+
+  //PRUEBA
+  //  if (FLAG2 == 1) {
+  //    if (BO7 == LOW) {
+  //      FLAGO6 = 1;
+  //    }
+  //
+  //    if (FLAGO6 == 1 && BO7 == HIGH) { //SOLO ES DE PRUEBA QUITAR DESPUES
+  //      FLAGO6 = 0;
+  //      gameover();
+  //
+  //    }
+  //  }
+
+  //AVANZAR P2
+  if (FLAG2 == 1) {
+    if (BO13 == LOW) {
       FLAGO6 = 1;
     }
 
-    if (FLAGO6 == 1 && BO7 == HIGH) { //SOLO ES DE PRUEBA QUITAR DESPUES
+    if (FLAGO6 == 1 && BO13 == HIGH) {
       FLAGO6 = 0;
-      gameover();
+      entrada2 = 58;
+    }
+  }
+
+  //ARRIBA P2
+  if (FLAG2 == 1) {
+    if (BO10 == LOW) {
+      FLAGO7 = 1;
+    }
+
+    if (FLAGO7 == 1 && BO10 == HIGH) {
+      FLAGO7 = 0;
+      entrada2 = 59;
 
     }
   }
 
-  if (FLAG3 == 1) {
-    if (BO2 == LOW) {
-      fon1 = 1;
-    }
-    if (fon1 == 1 && BO2 == HIGH) {
-      fon1 = 0;
-      ini();
+
+  //DERECHA P2
+  if (FLAG2 == 1) {
+    if (BO9 == LOW) {
+      FLAGO8 = 1;
     }
 
+    if (FLAGO8 == 1 && BO9 == HIGH) {
+      FLAGO8 = 0;
+      entrada2 = 60;
+
+    }
   }
 
+  //IZQUIERDA P2
+  if (FLAG2 == 1) {
+    if (BO8 == LOW) {
+      FLAGO9 = 1;
+    }
+
+    if (FLAGO9 == 1 && BO8 == HIGH) {
+      FLAGO9 = 0;
+      entrada2 = 61;
+
+    }
+  }
+
+<<<<<<< Updated upstream
 
   if (entrada == 48 && flag_orient == 0) {
+=======
+  //ABAJO P2
+  if (FLAG2 == 1) {
+    if (BO11 == LOW) {
+      FLAGO10 = 1;
+    }
+    if (FLAGO10 == 1 && BO11 == HIGH) {
+      FLAGO10 = 0;
+      entrada2 = 62;
+
+    }
+  }
+
+  //DISPARO P2
+  if (FLAG2 == 1) {
+    if (BO12 == LOW) {
+      FLAGO11 = 1;
+    }
+
+    if (FLAGO11 == 1 && BO12 == HIGH) {
+      FLAGO11 = 0;
+      entrada2 = 63;
+
+    }
+  }
+
+
+
+  //******************************************************************************************************
+  //MOVIMIENTO
+  //******************************************************************************************************
+
+  //*****************************Matrices de espacio ocupado*********************************
+  ploteo(x_t1, y_t1, x_t2, y_t2, flag_orient);
+
+  //***********************Movimiento***************************************
+  //************************Bloque1Movimiento********************************
+  if (entrada == 48 && flag_orient == 0 && con3 == 0) {
+>>>>>>> Stashed changes
     entrada = 0;
     FillRect(x_t1, y_t1, 15, 17, 0);
     y_t1 -= 5;
@@ -314,12 +470,18 @@ void loop() {
       LCD_Bitmap(x_t1, y_t1, 15, 17, tanque2_1);
     }
   }
+<<<<<<< Updated upstream
   else if (entrada == 48 && flag_orient == 1) {
+=======
+  //************************Bloque2Movimiento********************************
+  else if (entrada == 48 && flag_orient == 1 && con2 == 0) {
+>>>>>>> Stashed changes
     entrada = 0;
     FillRect(x_t1, y_t1, 17, 15, 0);
     x_t1 += 5;
     if (x_t1 >= x_limsup) {
       x_t1 -= 5;
+<<<<<<< Updated upstream
       LCD_Bitmap(x_t1, y_t1, 17, 15, tanque2_2);
     }
     else {
@@ -388,18 +550,141 @@ void loop() {
       LCD_Bitmap((x_t1 + 4), (y_t1 - 12), 8, 10, balazo_v);
       x_b1 = x_t1 + 4;
       y_b1 = y_t1 - 12;
+=======
+      LCD_Bitmap(x_t1, y_t1, 17, 15, tanque2_2);
+    }
+    else {
+      LCD_Bitmap(x_t1, y_t1, 17, 15, tanque2_2);
+    }
+  }
+  //************************Bloque3Movimiento*************************************
+  else if (entrada == 48 && flag_orient == 2 && con1 == 0) {
+    entrada = 0;
+    FillRect(x_t1, y_t1, 17, 15, 0);
+    x_t1 -= 5;
+    if (x_t1 <= x_liminf) {
+      x_t1 += 5;
+      LCD_Bitmap(x_t1, y_t1, 17, 15, tanque2_3);
+    }
+    else {
+      LCD_Bitmap(x_t1, y_t1, 17, 15, tanque2_3);
+    }
+  }
+  //************************Bloque4Movimiento********************************
+  else if (entrada == 48 && flag_orient == 3 && con4 == 0) {
+    entrada = 0;
+    FillRect(x_t1, y_t1, 15, 17, 0);
+    y_t1 += 5;
+    if (y_t1 >= (y_liminf - 17)) {
+      y_t1 -= 5;
+      LCD_Bitmap(x_t1, y_t1, 15, 17, tanque2_4);
+    }
+    else {
+      LCD_Bitmap(x_t1, y_t1, 15, 17, tanque2_4);
+    }
+  }
+  //***********************CambiosDeDireccion***************************************
+  //************************Bloque1Direccion********************************
+  else if (entrada == 49) {
+    entrada = 0;
+    FillRect(x_t1, y_t1, 17, 17, 0);
+    LCD_Bitmap(x_t1, y_t1, 15, 17, tanque2_1);
+    flag_orient = 0;
+  }
+  //************************Bloque2Direccion********************************
+  else if (entrada == 50) {
+    entrada = 0;
+    FillRect(x_t1, y_t1, 17, 17, 0);
+    LCD_Bitmap(x_t1, y_t1, 17, 15, tanque2_2);
+    flag_orient = 1;
+  }
+  //************************Bloque3Direccion********************************
+  else if (entrada == 51) {
+    entrada = 0;
+    FillRect(x_t1, y_t1, 17, 17, 0);
+    LCD_Bitmap(x_t1, y_t1, 17, 15, tanque2_3);
+    flag_orient = 2;
+  }
+  //************************Bloque4Direccion********************************
+  else if (entrada == 52) {
+    entrada = 0;
+    FillRect(x_t1, y_t1, 17, 17, 0);
+    LCD_Bitmap(x_t1, y_t1, 15, 17, tanque2_4);
+    flag_orient = 3;
+  }
+  //***********************Disparo***************************************
+  //************************Bloque1Disparo********************************
+  if ((entrada == 53 ) && ((flag_orient == 0) && (disparo_activo == 0))) {
+    entrada = 0;
+    disparo_vertU = 1;
+    disparo_vertA = 0;
+    disparo_horI = 0;
+    disparo_horD = 0;
+
+    if ((y_t1 - 12) >= y_limsup) {
+      disparo_activo = 1;
+      LCD_Bitmap((x_t1 + 4), (y_t1 - 12), 8, 10, balazo_v);
+      x_b1 = x_t1 + 4;
+      y_b1 = y_t1 - 12;
     }
     else {
       disparo_activo = 0;
     }
   }
+  //************************Bloque2Disparo********************************
   else if ((entrada == 53 ) && ((flag_orient == 1) && (disparo_activo == 0))) {
+    entrada = 0;
+    disparo_vertU = 0;
+    disparo_vertA = 0;
+    disparo_horI = 0;
+    disparo_horD = 1;
+    disparo_activo = 1;
+
+    if ((x_t1 + 19) <= x_limsup) {
+      disparo_activo = 1;
+      LCD_Bitmap((x_t1 + 18), (y_t1 + 4), 10, 8, balazo);
+      x_b1 = x_t1 + 18;
+      y_b1 = y_t1 + 4;
+    }
+    else {
+      disparo_activo = 0;
+    }
+
+  }
+  //************************Bloque3Disparo********************************
+  else if ((entrada == 53 ) && ((flag_orient == 2) && (disparo_activo == 0))) {
+    entrada = 0;
+    disparo_vertU = 0;
+    disparo_vertA = 0;
+    disparo_horI = 1;
+    disparo_horD = 0;
+    disparo_activo = 1;
+
+    if ((x_t1 - 12) <= x_limsup) {
+      disparo_activo = 1;
+      LCD_Bitmap((x_t1 - 12), (y_t1 + 4), 10, 8, balazo);
+      x_b1 = x_t1 - 12;
+      y_b1 = y_t1 + 4;
+>>>>>>> Stashed changes
+    }
+    else {
+      disparo_activo = 0;
+    }
+<<<<<<< Updated upstream
+  }
+  else if ((entrada == 53 ) && ((flag_orient == 1) && (disparo_activo == 0))) {
+=======
+    //************************Bloque4Disparo********************************
+  }
+  else if ((entrada == 53 ) && ((flag_orient == 3) && (disparo_activo == 0))) {
+>>>>>>> Stashed changes
     entrada = 0;
     disparo_vertU = 0;
     disparo_vertA = 1;
     disparo_horI = 0;
     disparo_horD = 0;
     disparo_activo = 1;
+<<<<<<< Updated upstream
     LCD_Bitmap((x_t1 + 19), (y_t1 + 4), 10, 8, balazo);
   }
   else if ((entrada == 53 ) && ((flag_orient == 2) && (disparo_activo == 0))) {
@@ -420,12 +705,74 @@ void loop() {
     LCD_Bitmap((x_t1 + 4), (y_t1 + 17), 8, 10, balazo_v);
   }
   //------->Avance Disparo
+=======
+
+    if ((y_t1 + 27) <= y_liminf) {
+      disparo_activo = 1;
+      LCD_Bitmap((x_t1 + 4), (y_t1 + 18), 8, 10, balazo_v);
+      x_b1 = x_t1 + 4;
+      y_b1 = y_t1 + 18;
+    }
+    else {
+      disparo_activo = 0;
+    }
+  }
+  //------->Avance Disparo
+  //************************Bloque1AvanceDisparo********************************
+>>>>>>> Stashed changes
   if ((disparo_activo == 1) && (disparo_vertU == 1)) {
     FillRect(x_b1, y_b1, 8, 10, 0);
     y_b1 -= 5;
     if (y_b1 >= y_limsup) {
+<<<<<<< Updated upstream
 
 
+      LCD_Bitmap((x_b1), (y_b1), 8, 10, balazo_v);
+      delay(100);
+    }
+=======
+      LCD_Bitmap((x_b1), (y_b1), 8, 10, balazo_v);
+      delay(100);
+    }
+    else {
+      disparo_activo = 0;
+    }
+  }
+
+  //************************Bloque2AvanceDisparo********************************
+  else if ((disparo_activo == 1) && (disparo_horD == 1)) {
+    FillRect(x_b1, y_b1, 10, 8, 0);
+    x_b1 += 5;
+    if (x_b1 <= (x_limsup + 10)) {
+      LCD_Bitmap((x_b1), (y_b1), 10, 8, balazo);
+      delay(100);
+    }
+    else {
+      disparo_activo = 0;
+    }
+
+  }
+  //************************Bloque3AvanceDisparo********************************
+  else if ((disparo_activo == 1) && (disparo_horI == 1)) {
+    FillRect(x_b1, y_b1, 10, 8, 0);
+    x_b1 -= 5;
+    if (x_b1 >= (x_liminf)) {
+      LCD_Bitmap((x_b1), (y_b1), 10, 8, balazo);
+      delay(100);
+    }
+>>>>>>> Stashed changes
+    else {
+      disparo_activo = 0;
+    }
+
+  }
+<<<<<<< Updated upstream
+=======
+  //************************Bloque4AvanceDisparo********************************
+  else if ((disparo_activo == 1) && (disparo_vertA == 1)) {
+    FillRect(x_b1, y_b1, 8, 10, 0);
+    y_b1 += 5;
+    if (y_b1 <= (y_liminf - 10)) {
       LCD_Bitmap((x_b1), (y_b1), 8, 10, balazo_v);
       delay(100);
     }
@@ -434,6 +781,7 @@ void loop() {
     }
 
   }
+>>>>>>> Stashed changes
 
 
 }
@@ -889,7 +1237,7 @@ void pista(void) {
   FLAG2 = 1;
   Serial2.println(6, DEC);
   //delay(10000);
- // gameover();
+  // gameover();
 
 
   /* LCD_Bitmap(30, 10, 17, 15, tanque2_2);
@@ -928,7 +1276,61 @@ void gameover(void) {
   FLAG3 = 1;
 }
 
+<<<<<<< Updated upstream
 //  String text = "prueba";
 //
 //  //text, x, y ,tamaño de font, color, background
 //  LCD_Print(text, 1, 0, 1, 0xffff, 0x00);}
+=======
+//*****************************Matrices de espacio ocupado*********************************
+void ploteo(int origenx, int origeny, int origenx2, int origeny2, int dir) {
+
+  int origenx_k = origenx + 17;
+  int origeny_k = origeny + 17;
+  int origenx_D = origenx_k + 5;
+  int origeny_A = origeny_k + 5;
+  int origenx_I = origenx - 5;
+  int origeny_U = origeny - 5;
+  int matx2[17];
+  int maty2[17];
+  int matx[17];
+  int maty[17];
+
+
+
+  if (dir == 1) {
+    if ((((origeny + 17) > origeny2) && ((origeny) < (origeny2 + 17))) && (((origenx + 22) > origenx2) && ((origenx + 22) < (origenx2 + 17)))) {
+
+      con2 = 1;
+    }
+    else {
+      con2 = 0;
+    }
+  }
+  else if (dir == 2) {
+    if ((((origeny + 17) > origeny2) && ((origeny) < (origeny2 + 17))) && (((origenx - 5) < origenx2 + 17) && ((origenx - 5) > (origenx2)))) {
+      con1 = 1;
+    }
+    else {
+      con1 = 0;
+    }
+  }
+  else if (dir == 3) {
+    if ((((origenx + 17) > origenx2) && ((origenx) < (origenx2 + 17))) && (((origeny + 22) > origeny2) && ((origeny + 22) < (origeny2 + 17)))) {
+      con4 = 1;
+    }
+    else {
+      con4 = 0;
+    }
+  }
+  else if (dir == 0) {
+    if ((((origenx + 17) > origenx2) && ((origenx) < (origenx2 + 17))) && (((origeny - 5) > origeny2) && ((origeny - 5) < (origeny2 + 17)))) {
+      con3 = 1;
+    }
+    else {
+      con3 = 0;
+    }
+  }
+
+}
+>>>>>>> Stashed changes
