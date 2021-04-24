@@ -1002,6 +1002,7 @@ void ini (void) {
   FLAG = 1;
   FLAG2 = 0;
   FLAG3 = 0;
+  Serial2.println(7, DEC);
 }
 
 
