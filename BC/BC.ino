@@ -59,12 +59,22 @@ int disparo_horI;
 int disparo_horD;
 int disparo_activo;
 
+int t1=0;
+int t2=0;
+
 int flag_orient2;
 int disparo_vertU2;
 int disparo_vertA2;
 int disparo_horI2;
 int disparo_horD2;
 int disparo_activo2;
+
+int hit1;
+int hit2;
+int life1;
+int life2;
+
+int enable_sprites=0;
 
  uint8_t BO1;
 uint8_t BO2;
@@ -117,7 +127,10 @@ void pista(void);
 void ini(void);
 void gameover(void);
 void ploteo(int origenx, int origeny, int origenx2, int origeny2, int dir);
+void HIT(int x_b1, int y_b1, int x_t2, int y_t2);
 //Indice de la imagen, 0, 0
+
+
 
 extern uint8_t fondo[];
 //***************************************************************************************************************************************
@@ -195,6 +208,11 @@ void setup() {
   disparo_horD2 = 0;
   disparo_activo2 = 0;
   flag_orient2 = 0;
+  hit1 =0;
+  hit2=0;
+  life1=3;
+  life2=3;
+  t1=millis();
 
 
 
@@ -203,11 +221,20 @@ void setup() {
 // Loop Infinito
 //***************************************************************************************************************************************
 void loop() {
+//***********************************Conteo de Tiempo****************************************************
+t2=millis();
+if((t1+100)<t2){
+  t1=millis(),
+  enable_sprites=1;
+}
+
+
+
 
 //***************************************************************************************************************************************
 // BOTONES
 //***************************************************************************************************************************************
-
+delay(10);
 
   BO1 = digitalRead(PA_7);
   BO2 = digitalRead(PA_6);
@@ -241,7 +268,50 @@ void loop() {
     }
     LCD_Sprite(30, 30, 17, 17, explo, 6, x, 0, 0);*/
 
+//****************************************************************************************
+//*Detección HIT
+//***********************************************************************************
+if(hit1==1){
+  hit1=0;
+  for(int i=0; i<6; i++){
+    LCD_Sprite(x_t2, y_t2, 17, 17, explo, 6, i, 0, 0);
+    delay(50);
+  }
+  FillRect(x_t2, y_t2, 17, 17, 0);
+  if(flag_orient2==0){
+    LCD_Bitmap(x_t2, y_t2, 15, 17, tanque1_1);
+  }
+  else if(flag_orient2==1){
+    LCD_Bitmap(x_t2, y_t2, 17, 15, tanque1_2);
+  }
+  else if(flag_orient2==2){
+    LCD_Bitmap(x_t2, y_t2, 17, 15, tanque1_3);
+  }
+  else if(flag_orient2==3){
+    LCD_Bitmap(x_t2, y_t2, 15, 17, tanque1_4);
+  }
+}
 
+if(hit2==1){
+  hit2=0;
+  for(int i=0; i<6; i++){
+    LCD_Sprite(x_t1, y_t1, 17, 17, explo, 6, i, 0, 0);
+    delay(50);
+  }
+  FillRect(x_t1, y_t1, 17, 17, 0);
+  if(flag_orient==0){
+    LCD_Bitmap(x_t1, y_t1, 15, 17, tanque2_1);
+  }
+  else if(flag_orient==1){
+    LCD_Bitmap(x_t1, y_t1, 17, 15, tanque2_2);
+  }
+  else if(flag_orient==2){
+    LCD_Bitmap(x_t1, y_t1, 17, 15, tanque2_3);
+  }
+  else if(flag_orient==3){
+    LCD_Bitmap(x_t1, y_t1, 15, 17, tanque2_4);
+  }
+}
 //****************************************************************************************
 //*Movimiento
 //***********************************************************************************
@@ -519,8 +589,7 @@ void loop() {
       LCD_Bitmap(x_t1, y_t1, 15, 17, tanque2_4);
       flag_orient = 3;
     }
-    //***********************Disparo***************************************
-    //************************Bloque1Disparo********************************
+      //************************Bloque1Disparo********************************
     if ((entrada == 53 ) && ((flag_orient == 0) && (disparo_activo == 0))) {
       entrada=0;
       disparo_vertU = 1;
@@ -528,9 +597,9 @@ void loop() {
       disparo_horI = 0;
       disparo_horD = 0;
 
-      if ((y_t1 - 12) >= y_limsup) {
+      if ((y_t1 - 12) >= y_limsup ) {
         disparo_activo = 1;
-        LCD_Bitmap((x_t1 + 4), (y_t1 - 12), 8, 10, balazo_v);
+
         x_b1 = x_t1 + 4;
         y_b1 = y_t1 - 12;
       }
@@ -549,7 +618,7 @@ void loop() {
 
       if ((x_t1 + 19) <= x_limsup) {
         disparo_activo = 1;
-        LCD_Bitmap((x_t1 + 18), (y_t1 + 4), 10, 8, balazo);
+
         x_b1 = x_t1 + 18;
         y_b1 = y_t1 + 4;
       }
@@ -569,7 +638,7 @@ void loop() {
 
       if ((x_t1 - 12) <= x_limsup) {
         disparo_activo = 1;
-        LCD_Bitmap((x_t1 - 12), (y_t1 + 4), 10, 8, balazo);
+
         x_b1 = x_t1 - 12;
         y_b1 = y_t1 + 4;
       }
@@ -588,7 +657,6 @@ void loop() {
 
       if ((y_t1 + 27) <= y_liminf) {
         disparo_activo = 1;
-        LCD_Bitmap((x_t1 + 4), (y_t1 + 18), 8, 10, balazo_v);
         x_b1 = x_t1 + 4;
         y_b1 = y_t1 + 18;
       }
@@ -596,59 +664,9 @@ void loop() {
         disparo_activo = 0;
       }
     }
-    //------->Avance Disparo
-    //************************Bloque1AvanceDisparo********************************
-    if ((disparo_activo == 1) && (disparo_vertU == 1)) {
-      FillRect(x_b1, y_b1, 8, 10, 0);
-      y_b1 -= 5;
-      if (y_b1 >= y_limsup) {
-        LCD_Bitmap((x_b1), (y_b1), 8, 10, balazo_v);
-        delay(100);
-      }
-      else {
-        disparo_activo = 0;
-      }
-    }
 
-    //************************Bloque2AvanceDisparo********************************
-    else if ((disparo_activo == 1) && (disparo_horD == 1)) {
-      FillRect(x_b1, y_b1, 10, 8, 0);
-      x_b1 += 5;
-      if (x_b1 <= (x_limsup + 10)) {
-        LCD_Bitmap((x_b1), (y_b1), 10, 8, balazo);
-        delay(100);
-      }
-      else {
-        disparo_activo = 0;
-      }
 
-    }
-    //************************Bloque3AvanceDisparo********************************
-    else if ((disparo_activo == 1) && (disparo_horI == 1)) {
-      FillRect(x_b1, y_b1, 10, 8, 0);
-      x_b1 -= 5;
-      if (x_b1 >= (x_liminf)) {
-        LCD_Bitmap((x_b1), (y_b1), 10, 8, balazo);
-        delay(100);
-      }
-      else {
-        disparo_activo = 0;
-      }
 
-    }
-    //************************Bloque4AvanceDisparo********************************
-    else if ((disparo_activo == 1) && (disparo_vertA == 1)) {
-      FillRect(x_b1, y_b1, 8, 10, 0);
-      y_b1 += 5;
-      if (y_b1 <= (y_liminf - 10)) {
-        LCD_Bitmap((x_b1), (y_b1), 8, 10, balazo_v);
-        delay(100);
-      }
-      else {
-        disparo_activo = 0;
-      }
-
-    }
 //**************************************************************************************
 //***************************PLAYER2****************************************************
 //**************************************************************************************
@@ -748,7 +766,6 @@ void loop() {
 
       if ((y_t2 - 12) >= y_limsup) {
         disparo_activo2 = 1;
-        LCD_Bitmap((x_t2 + 4), (y_t2 - 12), 8, 10, balazo_v);
         x_b2 = x_t2 + 4;
         y_b2 = y_t2 - 12;
       }
@@ -767,7 +784,7 @@ void loop() {
 
       if ((x_t2 + 19) <= x_limsup) {
         disparo_activo2 = 1;
-        LCD_Bitmap((x_t2 + 18), (y_t2 + 4), 10, 8, balazo);
+
         x_b2 = x_t2 + 18;
         y_b2 = y_t2 + 4;
       }
@@ -787,7 +804,7 @@ void loop() {
 
       if ((x_t2 - 12) <= x_limsup) {
         disparo_activo2 = 1;
-        LCD_Bitmap((x_t2 - 12), (y_t2 + 4), 10, 8, balazo);
+
         x_b2 = x_t2 - 12;
         y_b2 = y_t2 + 4;
       }
@@ -806,7 +823,7 @@ void loop() {
 
       if ((y_t2 + 27) <= y_liminf) {
         disparo_activo2 = 1;
-        LCD_Bitmap((x_t2 + 4), (y_t2 + 18), 8, 10, balazo_v);
+
         x_b2 = x_t2 + 4;
         y_b2 = y_t2 + 18;
       }
@@ -814,14 +831,94 @@ void loop() {
         disparo_activo2 = 0;
       }
     }
+
+
+if(enable_sprites==1){
+  
+enable_sprites=0;
     //------->Avance Disparo
+    //************************Bloque1AvanceDisparo********************************
+    if ((disparo_activo == 1) && (disparo_vertU == 1)) {
+      FillRect(x_b1, y_b1, 8, 10, 0);
+      y_b1 -= 5;
+      if((((x_b1+8)>x_t2)&&((x_b1)<(x_t2+17)))&&(((y_b1)>y_t2)&&((y_b1)<(y_t2+17)))){
+        disparo_activo = 0;
+        hit1=1;
+      }
+      if ((y_b1 >= y_limsup)&&hit1==0) {
+        LCD_Bitmap((x_b1), (y_b1), 8, 10, balazo_v);
+       
+      }
+      else {
+        disparo_activo = 0;
+      }
+    }
+
+    //************************Bloque2AvanceDisparo********************************
+    else if ((disparo_activo == 1) && (disparo_horD == 1)) {
+      FillRect(x_b1, y_b1, 10, 8, 0);
+      x_b1 += 5;
+       if ((((y_b1+17)>y_t2)&&((y_b1)<(y_t2+17)))&&(((x_b1+10)>x_t2)&&((x_b1+10)<(x_t2+17)))) {
+        disparo_activo = 0;
+        hit1=1;
+      }
+      
+      if ((x_b1 <= (x_limsup + 10))&&hit1==0) {
+        LCD_Bitmap((x_b1), (y_b1), 10, 8, balazo);
+        
+      }
+      else {
+        disparo_activo = 0;
+      }
+
+
+    }
+    //************************Bloque3AvanceDisparo********************************
+    else if ((disparo_activo == 1) && (disparo_horI == 1)) {
+      FillRect(x_b1, y_b1, 10, 8, 0);
+      x_b1 -= 5;
+      if((((y_b1+17)>y_t2)&&((y_b1)<(y_t2+17)))&&(((x_b1-5)<x_t2+17)&&((x_b1)>(x_t2)))){
+        disparo_activo = 0;
+        hit1=1;
+      }
+      if ((x_b1 >= (x_liminf))&&hit1==0) {
+        LCD_Bitmap((x_b1), (y_b1), 10, 8, balazo);
+        
+      }
+      else {
+        disparo_activo = 0;
+      }
+
+    }
+    //************************Bloque4AvanceDisparo********************************
+    else if ((disparo_activo == 1) && (disparo_vertA == 1)) {
+      FillRect(x_b1, y_b1, 8, 10, 0);
+      y_b1 += 5;
+      if((((x_b1+8)>x_t2)&&((x_b1)<(x_t2+17)))&&(((y_b1+10)>y_t2)&&((y_b1+10)<(y_t2+17)))){
+        disparo_activo = 0;
+        hit1=1;
+      }
+      if ((y_b1 <= (y_liminf - 10))&&hit1==0) {
+        LCD_Bitmap((x_b1), (y_b1), 8, 10, balazo_v);
+        
+      }
+      else {
+        disparo_activo = 0;
+      }
+
+    }
+ //------->Avance Disparo2
     //************************Bloque1AvanceDisparo********************************
     if ((disparo_activo2 == 1) && (disparo_vertU2 == 1)) {
       FillRect(x_b2, y_b2, 8, 10, 0);
       y_b2 -= 5;
-      if (y_b2 >= y_limsup) {
+      if((((x_b2+8)>x_t1)&&((x_b2)<(x_t1+17)))&&(((y_b2)>y_t1)&&((y_b2)<(y_t1+17)))){
+        disparo_activo2 = 0;
+        hit2=1;
+      }
+      if ((y_b2 >= y_limsup)&&hit2==0) {
         LCD_Bitmap((x_b2), (y_b2), 8, 10, balazo_v);
-        delay(100);
+       
       }
       else {
         disparo_activo2 = 0;
@@ -832,9 +929,13 @@ void loop() {
     else if ((disparo_activo2 == 1) && (disparo_horD2 == 1)) {
       FillRect(x_b2, y_b2, 10, 8, 0);
       x_b2 += 5;
-      if (x_b2 <= (x_limsup + 10)) {
+      if ((((y_b2+17)>y_t1)&&((y_b2)<(y_t1+17)))&&(((x_b2+10)>x_t1)&&((x_b2+10)<(x_t1+17)))) {
+        disparo_activo2 = 0;
+        hit2=1;
+      }
+      if ((x_b2 <= (x_limsup + 10))&&hit2==0) {
         LCD_Bitmap((x_b2), (y_b2), 10, 8, balazo);
-        delay(100);
+        
       }
       else {
         disparo_activo2 = 0;
@@ -845,9 +946,13 @@ void loop() {
     else if ((disparo_activo2 == 1) && (disparo_horI2 == 1)) {
       FillRect(x_b2, y_b2, 10, 8, 0);
       x_b2 -= 5;
-      if (x_b2 >= (x_liminf)) {
+      if((((y_b2+17)>y_t1)&&((y_b2)<(y_t1+17)))&&(((x_b2-5)<x_t1+17)&&((x_b2)>(x_t1)))){
+        disparo_activo2 = 0;
+        hit2=1;
+      }
+      if ((x_b2 >= (x_liminf))&&hit2==0) {
         LCD_Bitmap((x_b2), (y_b2), 10, 8, balazo);
-        delay(100);
+   
       }
       else {
         disparo_activo2 = 0;
@@ -858,17 +963,21 @@ void loop() {
     else if ((disparo_activo2 == 1) && (disparo_vertA2 == 1)) {
       FillRect(x_b2, y_b2, 8, 10, 0);
       y_b2 += 5;
-      if (y_b2 <= (y_liminf - 10)) {
+      if((((x_b2+8)>x_t1)&&((x_b2)<(x_t1+17)))&&(((y_b2+10)>y_t1)&&((y_b2+10)<(y_t1+17)))){
+        disparo_activo2 = 0;
+        hit2=1;
+      }
+      if ((y_b2 <= (y_liminf - 10))&&hit2==0) {
         LCD_Bitmap((x_b2), (y_b2), 8, 10, balazo_v);
-        delay(100);
+        
       }
       else {
         disparo_activo2 = 0;
       }
 
     }
-
-
+    
+}
 
 
 
@@ -1435,6 +1544,7 @@ void ploteo(int origenx, int origeny, int origenx2, int origeny2, int dir) {
       }
       else {
         con2=0;
+
       }
     }
     else if(dir==2){
@@ -1443,6 +1553,7 @@ void ploteo(int origenx, int origeny, int origenx2, int origeny2, int dir) {
       }
       else{
         con1=0;
+       
       }
     }
     else if(dir==3){
@@ -1451,6 +1562,7 @@ void ploteo(int origenx, int origeny, int origenx2, int origeny2, int dir) {
       }
       else{
         con4=0;
+    
       }
     }
     else if(dir==0){
@@ -1459,6 +1571,7 @@ void ploteo(int origenx, int origeny, int origenx2, int origeny2, int dir) {
       }
       else{
         con3=0;
+      
       }
     }
 
