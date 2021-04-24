@@ -90,11 +90,11 @@ int cancion = 0;
 #define NOTE_CS8 4435
 #define NOTE_D8  4699
 #define NOTE_DS8 4978
-#define REST      0
+#define REST 0
 
 
 // change this to make the song slower or faster
-int tempo = 200;
+int tempo = 110;
 
 // change this to whichever pin you want to use
 int buzzer = 22;
@@ -108,12 +108,12 @@ int melody[] = {
   // Song of storms - The Legend of Zelda Ocarina of Time.
   // Score available at https://musescore.com/user/4957541/scores/1545401
 
-  NOTE_C3, 4, REST, 4, REST, 4, NOTE_E3, 4, REST, 4, NOTE_G3, 4, NOTE_A3, 4, NOTE_G3, 4,
-  NOTE_C3, 4, REST, 4, REST, 4, NOTE_E3, 4, REST, 4, NOTE_G3, 4, NOTE_A3, 4, NOTE_G3, 4,
-  NOTE_C3, 4, REST, 4, REST, 4, NOTE_E3, 4, REST, 4, NOTE_G3, 4, NOTE_A3, 4, NOTE_G3, 4,
-  NOTE_C3, 4, REST, 4, REST, 4, NOTE_E3, 4, REST, 4, NOTE_G3, 4, NOTE_A3, 4, NOTE_G3, 4,
-  NOTE_C3, 4, REST, 4, REST, 4, NOTE_E3, 4, REST, 4, NOTE_G3, 4, NOTE_A3, 4, NOTE_G3, 4,
-  NOTE_C3, 4, REST, 4, REST, 4, NOTE_E3, 4, REST, 4, NOTE_G3, 4, NOTE_A3, 4, NOTE_G3, 4
+  NOTE_E4, 8, NOTE_G4, 4, NOTE_A4, -2, NOTE_A4, 8, NOTE_B4, 4, NOTE_E4, -2,
+  NOTE_E4, 8, NOTE_G4, 4, NOTE_A4, -2, NOTE_A4, 8, NOTE_B4, 4, NOTE_E4, -2,
+  NOTE_D4, 10, NOTE_C4, 10, NOTE_D4, 4,  NOTE_C4, 8, NOTE_D4, 8, NOTE_E4, 2,
+  NOTE_C4, 10, NOTE_C4, 10, NOTE_B3, 8,
+  NOTE_B3, 8, NOTE_A3, 8, NOTE_A3, 8,  NOTE_G3, -8, NOTE_C4, 8, NOTE_B3, 1, REST, 8
+
 
 };
 
@@ -137,11 +137,11 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
-  if (Serial2.available()>0) {
-    if (Serial2.read()=='6'){
+  if (Serial2.available() > 0) {
+    if (Serial2.read() == '6') {
       cancion = 6;
     }
-    
+
     Serial.write(cancion);
 
   }
