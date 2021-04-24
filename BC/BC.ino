@@ -34,6 +34,8 @@ int y_t2;
 int x_b2;
 int y_b2;
 
+int end_game;
+
 int con1 = 0;
 int con2 = 0;
 int con3 = 0;
@@ -212,6 +214,7 @@ void setup() {
   hit2=0;
   life1=3;
   life2=3;
+  end_game=0;
   t1=millis();
 
 
@@ -273,11 +276,17 @@ delay(10);
 //***********************************************************************************
 if(hit1==1){
   hit1=0;
+  life2--;
   for(int i=0; i<6; i++){
     LCD_Sprite(x_t2, y_t2, 17, 17, explo, 6, i, 0, 0);
     delay(50);
   }
   FillRect(x_t2, y_t2, 17, 17, 0);
+  if(life2==0){
+  LCD_Bitmap(x_t2, y_t2, 18, 30, tumba);
+  end_game=1;
+}
+if(end_game==0){
   if(flag_orient2==0){
     LCD_Bitmap(x_t2, y_t2, 15, 17, tanque1_1);
   }
@@ -291,14 +300,22 @@ if(hit1==1){
     LCD_Bitmap(x_t2, y_t2, 15, 17, tanque1_4);
   }
 }
+}
 
 if(hit2==1){
   hit2=0;
+  life1--;
   for(int i=0; i<6; i++){
     LCD_Sprite(x_t1, y_t1, 17, 17, explo, 6, i, 0, 0);
     delay(50);
   }
   FillRect(x_t1, y_t1, 17, 17, 0);
+if(life1==0){
+  LCD_Bitmap(x_t1, y_t1, 18, 30, tumba);
+  end_game=1;
+}
+
+if(end_game==0){  
   if(flag_orient==0){
     LCD_Bitmap(x_t1, y_t1, 15, 17, tanque2_1);
   }
@@ -311,6 +328,7 @@ if(hit2==1){
   else if(flag_orient==3){
     LCD_Bitmap(x_t1, y_t1, 15, 17, tanque2_4);
   }
+}
 }
 //****************************************************************************************
 //*Movimiento
