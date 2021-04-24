@@ -90,11 +90,12 @@ int cancion = 0;
 #define NOTE_CS8 4435
 #define NOTE_D8  4699
 #define NOTE_DS8 4978
-#define REST      0
+#define REST 0
 
 
 // change this to make the song slower or faster
-int tempo = 200;
+int tempo = 110;
+int tempo2 = 120;
 
 // change this to whichever pin you want to use
 int buzzer = 22;
@@ -108,24 +109,38 @@ int melody[] = {
   // Song of storms - The Legend of Zelda Ocarina of Time.
   // Score available at https://musescore.com/user/4957541/scores/1545401
 
-  NOTE_C3, 4, REST, 4, REST, 4, NOTE_E3, 4, REST, 4, NOTE_G3, 4, NOTE_A3, 4, NOTE_G3, 4,
-  NOTE_C3, 4, REST, 4, REST, 4, NOTE_E3, 4, REST, 4, NOTE_G3, 4, NOTE_A3, 4, NOTE_G3, 4,
-  NOTE_C3, 4, REST, 4, REST, 4, NOTE_E3, 4, REST, 4, NOTE_G3, 4, NOTE_A3, 4, NOTE_G3, 4,
-  NOTE_C3, 4, REST, 4, REST, 4, NOTE_E3, 4, REST, 4, NOTE_G3, 4, NOTE_A3, 4, NOTE_G3, 4,
-  NOTE_C3, 4, REST, 4, REST, 4, NOTE_E3, 4, REST, 4, NOTE_G3, 4, NOTE_A3, 4, NOTE_G3, 4,
-  NOTE_C3, 4, REST, 4, REST, 4, NOTE_E3, 4, REST, 4, NOTE_G3, 4, NOTE_A3, 4, NOTE_G3, 4
+  NOTE_E4, 8, NOTE_G4, 4, NOTE_A4, -2, NOTE_A4, 8, NOTE_B4, 4, NOTE_E4, -2,
+  NOTE_E4, 8, NOTE_G4, 4, NOTE_A4, -2, NOTE_A4, 8, NOTE_B4, 4, NOTE_E4, -2,
+  NOTE_D4, 10, NOTE_C4, 10, NOTE_D4, 4,  NOTE_C4, 8, NOTE_D4, 8, NOTE_E4, 2,
+  NOTE_C4, 10, NOTE_C4, 10, NOTE_B3, 8,
+  NOTE_B3, 8, NOTE_A3, 8, NOTE_A3, 8,  NOTE_G3, -8, NOTE_C4, 8, NOTE_B3, 1, REST, 8
+
 
 };
+
+int melody2[] = {
+
+  // Song of storms - The Legend of Zelda Ocarina of Time.
+  // Score available at https://musescore.com/user/4957541/scores/1545401
+
+  NOTE_B3, 2, NOTE_D4, 2, NOTE_D4, 4, NOTE_E4, 4, NOTE_E4, 4, NOTE_G4, 8, NOTE_FS4, 8,
+  NOTE_G4, 8, NOTE_FS4, 8, NOTE_G4, 4, NOTE_D4, 4, NOTE_D4, 4, NOTE_E4, 4, NOTE_E4, 4
+
+
+};
+
 
 // sizeof gives the number of bytes, each int value is composed of two bytes (16 bits)
 // there are two values per note (pitch and duration), so for each note there are four bytes
 int notes = sizeof(melody) / sizeof(melody[0]) / 2;
+int notes2 = sizeof(melody2) / sizeof(melody2[0]) / 2;
 
 // this calculates the duration of a whole note in ms
 int wholenote = (60000 * 4) / tempo;
+int wholenote2 = (60000 * 4) / tempo2;
 
 int divider = 0, noteDuration = 0;
-
+int divider2 = 0, noteDuration2 = 0;
 
 void setup() {
   // put your setup code here, to run once:
@@ -137,11 +152,16 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
-  if (Serial2.available()>0) {
-    if (Serial2.read()=='6'){
+  if (Serial2.available() > 0) {
+    if (Serial2.read() == '6') {
       cancion = 6;
     }
-    
+
+    if (Serial2.read() == '7') {
+      cancion = 7;
+    }
+
+
     Serial.write(cancion);
 
   }
@@ -172,6 +192,31 @@ void loop() {
     }
 
 
+  }
+
+  if (cancion == 7) {
+    for (int thisNote2 = 0; thisNote2 < notes2 * 2; thisNote2 = thisNote2 + 2) {
+
+      // calculates the duration of each note
+      divider2 = melody2[thisNote2 + 1];
+      if (divider2 > 0) {
+        // regular note, just proceed
+        noteDuration2 = (wholenote2) / divider2;
+      } else if (divider2 < 0) {
+        // dotted notes are represented with negative durations!!
+        noteDuration2 = (wholenote2) / abs(divider2);
+        noteDuration2 *= 1.5; // increases the duration in half for dotted notes
+      }
+
+      // we only play the note for 90% of the duration, leaving 10% as a pause
+      tone(buzzer, melody2[thisNote2], noteDuration2 * 0.9);
+
+      // Wait for the specief duration before playing the next note.
+
+
+      // stop the waveform generation before the next note.
+      noTone(buzzer);
+    }
   }
 
 }
