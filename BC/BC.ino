@@ -1,4 +1,5 @@
-
+#include <SPI.h>
+#include <SD.h>
 #include <stdint.h>
 #include <stdbool.h>
 #include <TM4C123GH6PM.h>
@@ -23,6 +24,8 @@
 #define LCD_WR PD_3
 #define LCD_RD PE_1
 int DPINS[] = {PB_0, PB_1, PB_2, PB_3, PB_4, PB_5, PB_6, PB_7};
+File myFile;
+File root;
 int entrada;
 int entrada2;
 int x_t1;
@@ -33,6 +36,20 @@ int x_t2;
 int y_t2;
 int x_b2;
 int y_b2;
+
+byte record1_1;
+byte record1_2;
+byte record1_3;
+byte record2_1;
+byte record2_2;
+byte record2_3;
+int record1;
+int record1U;
+int record2;
+int record2U;
+byte basura;
+String archivo;
+String Datos;
 
 int end_game;
 
@@ -130,6 +147,7 @@ void ini(void);
 void gameover(void);
 void ploteo(int origenx, int origeny, int origenx2, int origeny2, int dir);
 void HIT(int x_b1, int y_b1, int x_t2, int y_t2);
+int num_ascii(char num);
 //Indice de la imagen, 0, 0
 
 
@@ -141,9 +159,11 @@ extern uint8_t fondo[];
 void setup() {
   SysCtlClockSet(SYSCTL_SYSDIV_2_5 | SYSCTL_USE_PLL | SYSCTL_OSC_MAIN | SYSCTL_XTAL_16MHZ);
   Serial.begin(9600);
+  SPI.setModule(0);
 
   GPIOPadConfigSet(GPIO_PORTB_BASE, 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7, GPIO_STRENGTH_8MA, GPIO_PIN_TYPE_STD_WPU);
   Serial2.begin(9600);
+  pinMode(PA_3, OUTPUT);
   pinMode(PF_4, INPUT_PULLUP);
   pinMode(PA_6, INPUT_PULLUP);
   pinMode(PA_7, INPUT_PULLUP);
@@ -157,7 +177,11 @@ void setup() {
   pinMode(PC_6, INPUT_PULLUP);
   pinMode(PC_7, INPUT_PULLUP);
 
-
+  if (!SD.begin(PA_3)) {
+    Serial.println("initialization failed!");
+    return;
+  }
+  Serial.println("initialization done.");
 
 
   Serial.println("Inicio");
@@ -289,6 +313,11 @@ void loop() {
       delay(100);
       end_game = 1;
       Serial.println("Gano Azul");
+      record1++;
+      if (record1>9){
+        record1=1;
+        record2=0;
+      }
       gameover();
     }
     else if(life2==2){
@@ -330,6 +359,11 @@ void loop() {
       end_game = 1;
       delay(100);
       Serial.println("Gano Amarillo");
+      record2++;
+      if (record2>9){
+        record1=0;
+        record2=1;
+      }
       gameover();
     }
     else if(life1==2){
@@ -1378,6 +1412,46 @@ void LCD_Sprite(int x, int y, int width, int height, unsigned char bitmap[], int
 
 
 void pista(void) {
+  int k=0;
+  myFile=SD.open("RECORD.txt");
+  if(myFile){
+    Serial.println("test.txt:");
+    while(myFile.available()){
+      k++;
+      if(k==1){
+        record1_1=myFile.read();
+      }
+      else if (k==2){
+      record1_2=myFile.read();
+    }
+      else if (k==3){
+      record1_3=myFile.read();
+    } 
+    else if (k==4){
+      record2_1=myFile.read();
+    }
+      else if (k==5){
+      record2_2=myFile.read();
+    } 
+    else if (k==6){
+      record2_3=myFile.read();
+    }
+    else{
+      Serial.write(myFile.read());
+    }
+    }    
+    myFile.close();
+  }
+  
+  
+  record1U=num_ascii(record1_1);
+  record1=record1U;
+  record2U=num_ascii(record1_2);
+  record2=record2U;
+  Serial.println("AQUI BIEN");
+  Serial.println(record1);
+  Serial.println(record2);
+  
 
 
   LCD_Clear(0x00);
@@ -1540,12 +1614,34 @@ void ini (void) {
 
 void gameover(void) {
   LCD_Clear(0x00);
-
+  Serial.println("BUG");
+  Serial.println(String(record1));
+  Serial.println(String(record2));
   String text4 = "GAME OVER";
   //text, x, y ,tamaño de font, color, background
-  LCD_Print(text4, 100, 100, 2, 0xffff, 0x00);
+  LCD_Print(text4, 90, 10, 2, 0xffff, 0x00);
+  LCD_Print("SCORE", 145, 27, 1, 0xffff, 0x00); 
+  LCD_Print("P1", 110, 40, 1, 0xffff, 0x00);
+  LCD_Print(String(record1), 140, 40, 1, 0xffff, 0x00);
+  LCD_Print("-", 160, 40, 1, 0xffff, 0x00); 
+  LCD_Print(String(record2), 180, 40, 1, 0xffff, 0x00);
+  LCD_Print("P2", 200, 40, 1, 0xffff, 0x00); 
   FLAG2 = 0;
   FLAG3 = 1;
+  //Imprimir record despues de esta linea convertirlo a string
+
+  //Borrar archivo y actualizar record
+  SD.remove("RECORD.txt");
+   myFile = SD.open("RECORD.txt", FILE_WRITE);
+
+  if (myFile) {
+    myFile.print(String(record1));
+    myFile.print(String(record2));
+    myFile.close();
+  } else {
+    // if the file didn't open, print an error:
+    Serial.println("error opening reord.txt");
+  }
 }
 
 //*****************************Matrices de espacio ocupado*********************************
@@ -1653,4 +1749,49 @@ void ploteo(int origenx, int origeny, int origenx2, int origeny2, int dir) {
     }
   }
 
+}
+
+int num_ascii(char num){
+  switch(num){
+        
+        case 48:
+    return 0;
+    break;
+    
+    case 49:
+    return 1;
+    break;
+
+    case 50:
+    return 2;
+    break;
+    
+    case 51:
+    return 3;
+    break;
+
+    case 52:
+    return 4;
+    break;
+    
+    case 53:
+    return 5;
+    break;
+
+    case 54:
+    return 6;
+    break;
+    
+    case 55:
+    return 7;
+    break;
+
+    case 56:
+    return 8;
+    break;
+    
+    case 57:
+    return 9;
+    break;
+  }
 }
