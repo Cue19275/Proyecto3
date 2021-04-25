@@ -94,6 +94,11 @@ int life1;
 int life2;
 
 int enable_sprites = 0;
+int enable_personajes = 0;
+int cont_personajesp1 = 1;
+int cont_personajesp2 = 1;
+int gano_p1=0;
+int gano_p2=0;
 
 uint8_t BO1;
 uint8_t BO2;
@@ -125,8 +130,18 @@ uint8_t FLAGO8;
 uint8_t FLAGO9;
 uint8_t FLAGO10;
 uint8_t FLAGO11;
+uint8_t FLAGO12;
+uint8_t FLAGO13;
+uint8_t FLAGO14;
+uint8_t FLAGO15;
 uint8_t FINAL;
 
+extern uint8_t otacon[];
+extern uint8_t snake[];
+extern uint8_t meryl[];
+extern uint8_t liquid[];
+extern uint8_t naomi[];
+extern uint8_t sniper[];
 //***************************************************************************************************************************************
 // Functions Prototypes
 //***************************************************************************************************************************************
@@ -148,6 +163,7 @@ void gameover(void);
 void ploteo(int origenx, int origeny, int origenx2, int origeny2, int dir);
 void HIT(int x_b1, int y_b1, int x_t2, int y_t2);
 int num_ascii(char num);
+void character_select(int p1, int p2);
 //Indice de la imagen, 0, 0
 
 
@@ -283,10 +299,75 @@ void loop() {
     }
     if (fon == 1 && BO1 == HIGH) {
       fon = 0;
+      enable_personajes = 0;
       pista();
     }
 
   }
+  //********************************************************************************************
+  //********************************SELECCION DE PERSONAJE***********************************
+  //********************************************************************************************
+  //PERSONAJE1 p1
+  if (FLAG == 1) {
+    if (BO3 == LOW) {
+      FLAGO12 = 1;
+      Serial.println("FaseUno");
+    }
+    if (FLAGO12 == 1 && BO3 == HIGH) {
+      FLAGO12 = 0;
+      cont_personajesp1++;
+      
+      if (cont_personajesp1 > 3) {
+        cont_personajesp1 = 1;
+      }
+
+    }
+  }
+  //PERSONAJE2 p1
+  if (FLAG == 1) {
+    if (BO4 == LOW) {
+      FLAGO13 = 1;
+    }
+    if (FLAGO13 == 1 && BO4 == HIGH) {
+      FLAGO13 = 0;
+      cont_personajesp1--;
+      if (cont_personajesp1 < 1) {
+        cont_personajesp1 = 3;
+      }
+
+    }
+
+  }
+  //PERSONAJE1 p2
+  if (FLAG == 1) {
+    if (BO9 == LOW) {
+      FLAGO14 = 1;
+    }
+    if (FLAGO14 == 1 && BO9 == HIGH) {
+      FLAGO14 = 0;
+      cont_personajesp2++;
+      if (cont_personajesp2 > 3) {
+        cont_personajesp2 = 1;
+      }
+
+    }
+  }
+  //PERSONAJE2 p3
+  if (FLAG == 1) {
+    if (BO8 == LOW) {
+      FLAGO15 = 1;
+    }
+    if (FLAGO15 == 1 && BO8 == HIGH) {
+      FLAGO15 = 0;
+      cont_personajesp2--;
+      if (cont_personajesp2 < 1) {
+        cont_personajesp2 = 3;
+      }
+
+    }
+
+  }
+
 
   /*for (int x = 0; x<6; x++){
     if(x == 6){
@@ -314,17 +395,19 @@ void loop() {
       end_game = 1;
       Serial.println("Gano Azul");
       record1++;
-      if (record1>9){
-        record1=1;
-        record2=0;
+      if (record1 > 9) {
+        record1 = 1;
+        record2 = 0;
       }
+      gano_p1=1;
+      gano_p2=0;
       gameover();
     }
-    else if(life2==2){
+    else if (life2 == 2) {
       FillRect(197, 4, 83, 8, 0);
       LCD_Bitmap(220, 4, 60, 8, lifeb2);
     }
-    else if(life2==1){
+    else if (life2 == 1) {
       FillRect(197, 4, 83, 8, 0);
       LCD_Bitmap(244, 4, 36, 8, lifeb3);
     }
@@ -355,23 +438,25 @@ void loop() {
     if (life1 == 0) {
       LCD_Bitmap(x_t1, y_t1, 18, 30, tumba);
       FillRect(65, 4, 83, 8, 0);
-      LCD_Bitmap(132, 4, 16, 8, lifeb4);      
+      LCD_Bitmap(132, 4, 16, 8, lifeb4);
       end_game = 1;
       delay(100);
       Serial.println("Gano Amarillo");
       record2++;
-      if (record2>9){
-        record1=0;
-        record2=1;
+      if (record2 > 9) {
+        record1 = 0;
+        record2 = 1;
       }
+      gano_p2=1;
+      gano_p1=0;
       gameover();
     }
-    else if(life1==2){
+    else if (life1 == 2) {
       FillRect(65, 4, 83, 8, 0);
       LCD_Bitmap(88, 4, 60, 8, lifeb2);
-      
+
     }
-    else if(life1==1){
+    else if (life1 == 1) {
       FillRect(65, 4, 83, 8, 0);
       LCD_Bitmap(112, 4, 36, 8, lifeb3);
     }
@@ -582,7 +667,7 @@ void loop() {
     }
 
   }
-
+  character_select(cont_personajesp1, cont_personajesp2);
   //*****************************Matrices de espacio ocupado*********************************
   ploteo(x_t1, y_t1, x_t2, y_t2, flag_orient);
 
@@ -1412,46 +1497,46 @@ void LCD_Sprite(int x, int y, int width, int height, unsigned char bitmap[], int
 
 
 void pista(void) {
-  int k=0;
-  myFile=SD.open("RECORD.txt");
-  if(myFile){
+  int k = 0;
+  myFile = SD.open("RECORD.txt");
+  if (myFile) {
     Serial.println("test.txt:");
-    while(myFile.available()){
+    while (myFile.available()) {
       k++;
-      if(k==1){
-        record1_1=myFile.read();
+      if (k == 1) {
+        record1_1 = myFile.read();
       }
-      else if (k==2){
-      record1_2=myFile.read();
+      else if (k == 2) {
+        record1_2 = myFile.read();
+      }
+      else if (k == 3) {
+        record1_3 = myFile.read();
+      }
+      else if (k == 4) {
+        record2_1 = myFile.read();
+      }
+      else if (k == 5) {
+        record2_2 = myFile.read();
+      }
+      else if (k == 6) {
+        record2_3 = myFile.read();
+      }
+      else {
+        Serial.write(myFile.read());
+      }
     }
-      else if (k==3){
-      record1_3=myFile.read();
-    } 
-    else if (k==4){
-      record2_1=myFile.read();
-    }
-      else if (k==5){
-      record2_2=myFile.read();
-    } 
-    else if (k==6){
-      record2_3=myFile.read();
-    }
-    else{
-      Serial.write(myFile.read());
-    }
-    }    
     myFile.close();
   }
-  
-  
-  record1U=num_ascii(record1_1);
-  record1=record1U;
-  record2U=num_ascii(record1_2);
-  record2=record2U;
+
+
+  record1U = num_ascii(record1_1);
+  record1 = record1U;
+  record2U = num_ascii(record1_2);
+  record2 = record2U;
   Serial.println("AQUI BIEN");
   Serial.println(record1);
   Serial.println(record2);
-  
+
 
 
   LCD_Clear(0x00);
@@ -1551,7 +1636,8 @@ void pista(void) {
   con2_ = 0;
   con3_ = 0;
   con4_ = 0;
-
+  gano_p1=0;
+  gano_p2=0;
   enable_sprites = 0;
 
   x_t1 = 80;
@@ -1609,6 +1695,9 @@ void ini (void) {
   FLAG = 1;
   FLAG2 = 0;
   FLAG3 = 0;
+  enable_personajes = 1;
+  cont_personajesp1 = 1;
+  cont_personajesp2 = 1;
 }
 
 
@@ -1620,19 +1709,48 @@ void gameover(void) {
   String text4 = "GAME OVER";
   //text, x, y ,tamaño de font, color, background
   LCD_Print(text4, 90, 10, 2, 0xffff, 0x00);
-  LCD_Print("SCORE", 145, 27, 1, 0xffff, 0x00); 
+  LCD_Print("SCORE", 145, 27, 1, 0xffff, 0x00);
   LCD_Print("P1", 110, 40, 1, 0xffff, 0x00);
   LCD_Print(String(record1), 140, 40, 1, 0xffff, 0x00);
-  LCD_Print("-", 160, 40, 1, 0xffff, 0x00); 
+  LCD_Print("-", 160, 40, 1, 0xffff, 0x00);
   LCD_Print(String(record2), 180, 40, 1, 0xffff, 0x00);
-  LCD_Print("P2", 200, 40, 1, 0xffff, 0x00); 
+  LCD_Print("P2", 200, 40, 1, 0xffff, 0x00);
   FLAG2 = 0;
   FLAG3 = 1;
-  //Imprimir record despues de esta linea convertirlo a string
 
+
+
+if(gano_p1==1){
+  if(cont_personajesp1 == 1){
+    LCD_Print("Solid Snake Wins", 30, 170, 2, 0xffff, 0x00);
+    LCD_Bitmap(134, 70, 52, 89, snake);
+  }
+  else if(cont_personajesp1 == 2){
+    LCD_Print("Otacon Wins", 75, 170, 2, 0xffff, 0x00);
+    LCD_Bitmap(134, 70, 52, 89, otacon);
+  }
+  else if(cont_personajesp1 == 3){
+    LCD_Print("Meryl Wins", 80, 170, 2, 0xffff, 0x00);
+    LCD_Bitmap(134, 70, 52, 89, meryl);
+  }
+}
+else if(gano_p2==1){
+  if(cont_personajesp2 == 1){
+    LCD_Print("Liquid Snake Wins", 25, 170, 2, 0xffff, 0x00);
+    LCD_Bitmap(134, 70, 52, 89, liquid);
+  }
+  else if(cont_personajesp2 == 2){
+    LCD_Print("Sniper Wolf Wins", 30, 170, 2, 0xffff, 0x00);
+    LCD_Bitmap(134, 70, 52, 89, sniper);
+  }
+  else if(cont_personajesp2 == 3){
+    LCD_Print("Naomi Hunter Wins", 30, 170, 2, 0xffff, 0x00);
+    LCD_Bitmap(134, 70, 52, 89, naomi);
+  }
+}
   //Borrar archivo y actualizar record
   SD.remove("RECORD.txt");
-   myFile = SD.open("RECORD.txt", FILE_WRITE);
+  myFile = SD.open("RECORD.txt", FILE_WRITE);
 
   if (myFile) {
     myFile.print(String(record1));
@@ -1751,47 +1869,70 @@ void ploteo(int origenx, int origeny, int origenx2, int origeny2, int dir) {
 
 }
 
-int num_ascii(char num){
-  switch(num){
-        
-        case 48:
-    return 0;
-    break;
-    
+int num_ascii(char num) {
+
+  switch (num) {
+
+    case 48:
+      return 0;
+      break;
+
     case 49:
-    return 1;
-    break;
+      return 1;
+      break;
 
     case 50:
-    return 2;
-    break;
-    
+      return 2;
+      break;
+
     case 51:
-    return 3;
-    break;
+      return 3;
+      break;
 
     case 52:
-    return 4;
-    break;
-    
+      return 4;
+      break;
+
     case 53:
-    return 5;
-    break;
+      return 5;
+      break;
 
     case 54:
-    return 6;
-    break;
-    
+      return 6;
+      break;
+
     case 55:
-    return 7;
-    break;
+      return 7;
+      break;
 
     case 56:
-    return 8;
-    break;
-    
+      return 8;
+      break;
+
     case 57:
-    return 9;
-    break;
+      return 9;
+      break;
+  }
+}
+void character_select(int p1, int p2) {
+  if(enable_personajes==1){
+  if (p1 == 1) {
+    LCD_Bitmap(30, 100, 52, 89, snake);
+  }
+  else if (p1 == 2) {
+    LCD_Bitmap(30, 100, 52, 89, otacon);
+  }
+  else if (p1 == 3) {
+    LCD_Bitmap(30, 100, 52, 89, meryl);
+  }
+  if (p2 == 1) {
+    LCD_Bitmap(238, 100, 52, 89, liquid);
+  }
+  else if (p2 == 2) {
+    LCD_Bitmap(238, 100, 52, 89, sniper);
+  }
+  else if (p2 == 3) {
+    LCD_Bitmap(238, 100, 52, 89, naomi);
+  }
   }
 }
