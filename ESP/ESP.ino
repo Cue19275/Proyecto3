@@ -1,8 +1,33 @@
 
-#include <ESP32Servo.h>
 
+
+#include <ESP32Servo.h>
+#include "config.h"
 int x;
 int y;
+int Bot1 = 0;
+int Bot2 = 0;
+int Bot3 = 0;
+int Bot4 = 0;
+int Bot5 = 0;
+int Bot6 = 0;
+int flag1;
+int flag2;
+int flag3;
+int flag4;
+int flag5;
+int flag6;
+
+
+
+AdafruitIO_Feed *UP = io.feed("UP");
+AdafruitIO_Feed *DOWN = io.feed("DOWN");
+AdafruitIO_Feed *LEFT = io.feed("LEFT");
+AdafruitIO_Feed *RIGHT = io.feed("RIGHT");
+AdafruitIO_Feed *FWT = io.feed("FWT");
+AdafruitIO_Feed *SHOOT = io.feed("SHOOT");
+
+
 #define NOTE_B0  31
 #define NOTE_C1  33
 #define NOTE_CS1 35
@@ -169,13 +194,43 @@ void setup() {
   pinMode(22, OUTPUT);
   pinMode(2, INPUT);
   pinMode(4, INPUT);
+ 
+  pinMode(5, OUTPUT);
+  pinMode(23, OUTPUT);
+  pinMode(19, OUTPUT);
+  pinMode(18, OUTPUT);
+  pinMode(15, OUTPUT);
+  pinMode(21, OUTPUT);
+
   Serial.begin(9600);
 
-
+  io.connect(); //se conecta al servidor
+  UP->onMessage(handleMessage);
+  DOWN->onMessage(handleMessage2);
+  LEFT->onMessage(handleMessage3);
+  RIGHT->onMessage(handleMessage4);
+  FWT->onMessage(handleMessage5);
+  SHOOT->onMessage(handleMessage6);
+  while (io.status() < AIO_CONNECTED) {
+    Serial.print(".");
+    delay(500);
+  }
+  Serial.println();
+  Serial.println(io.statusText());
+  UP->get();
+  DOWN->get();
+  LEFT->get();
+  RIGHT->get();
+  FWT->get();
+  SHOOT->get();
 }
 
-void loop() {
 
+
+
+
+void loop() {
+  io.run();
   x = digitalRead(2);
   y = digitalRead(4);
 
@@ -213,7 +268,7 @@ void loop() {
 
 
   if (y == HIGH && x == LOW) {
-    
+
     for (int thisNote = 0; thisNote < notes * 2; thisNote = thisNote + 2) {
 
 
@@ -268,4 +323,76 @@ void loop() {
 
   }
 
+
+}
+
+
+
+void handleMessage(AdafruitIO_Data*data) {
+  Bot1 = data->toInt();
+  if (Bot1 == 1) {
+   digitalWrite(5, HIGH);
+    Serial.println("!");
+  }
+  else {
+    digitalWrite(5, LOW);
+  }
+}
+
+
+void handleMessage2(AdafruitIO_Data*data) {
+  Bot2 = data->toInt();
+ if (Bot2 == 1) {
+   digitalWrite(15, HIGH);
+    Serial.println("!");
+  }
+  else {
+    digitalWrite(15, LOW);
+  }
+}
+
+void handleMessage3(AdafruitIO_Data*data) {
+  Bot3 = data->toInt();
+if (Bot3 == 1) {
+   digitalWrite(18, HIGH);
+    Serial.println("!");
+  }
+  else {
+    digitalWrite(18, LOW);
+  }
+}
+
+
+void handleMessage4(AdafruitIO_Data*data) {
+  Bot4 = data->toInt();
+  if (Bot4 == 1) {
+   digitalWrite(19, HIGH);
+    Serial.println("!");
+  }
+  else {
+    digitalWrite(19, LOW);
+  }
+}
+
+void handleMessage5(AdafruitIO_Data*data) {
+  Bot5 = data->toInt();
+  if (Bot5 == 1) {
+   digitalWrite(21, HIGH);
+    Serial.println("!");
+  }
+  else {
+    digitalWrite(21, LOW);
+  }
+}
+
+
+void handleMessage6(AdafruitIO_Data*data) {
+  Bot6 = data->toInt();
+if (Bot6 == 1) {
+   digitalWrite(23, HIGH);
+    Serial.println("!");
+  }
+  else {
+    digitalWrite(23, LOW);
+  }
 }
