@@ -1,6 +1,8 @@
 
 #include <ESP32Servo.h>
-int cancion = 0;
+
+int x;
+int y;
 #define NOTE_B0  31
 #define NOTE_C1  33
 #define NOTE_CS1 35
@@ -145,30 +147,56 @@ int divider2 = 0, noteDuration2 = 0;
 void setup() {
   // put your setup code here, to run once:
   pinMode(22, OUTPUT);
-  Serial.begin(115200);
-  Serial2.begin(9600, SERIAL_8N1, 16, 17);
+  pinMode(2, INPUT);
+  pinMode(4, INPUT);
+  Serial.begin(9600);
+
 
 }
 
 void loop() {
+
+x = digitalRead(2);
+y = digitalRead(4);
+  
   // put your main code here, to run repeatedly:
-  if (Serial2.available() > 0) {
-    if (Serial2.read() == '6') {
-      cancion = 6;
+
+
+
+  if (x == HIGH && y ==LOW ) {
+    for (int thisNote2 = 0; thisNote2 < notes2 * 2; thisNote2 = thisNote2 + 2) {
+
+
+      // calculates the duration of each note
+      divider2 = melody2[thisNote2 + 1];
+      if (divider2 > 0) {
+        // regular note, just proceed
+        noteDuration2 = (wholenote2) / divider2;
+      } else if (divider2 < 0) {
+        // dotted notes are represented with negative durations!!
+        noteDuration2 = (wholenote2) / abs(divider2);
+        noteDuration2 *= 1.5; // increases the duration in half for dotted notes
+      }
+
+      // we only play the note for 90% of the duration, leaving 10% as a pause
+      tone(buzzer, melody2[thisNote2], noteDuration2 * 0.9);
+
+      // Wait for the specief duration before playing the next note.
+      // stop the waveform generation before the next note.
+      noTone(buzzer);
+
+
+
     }
-
-    if (Serial2.read() == '7') {
-      cancion = 7;
-    }
-
-
-    Serial.write(cancion);
-
   }
 
-  if (cancion == 6) {
-    Serial.println("Cancion 6");
+
+
+  if (y == HIGH && x == LOW) {
+    Serial.println("Cancion 7");
     for (int thisNote = 0; thisNote < notes * 2; thisNote = thisNote + 2) {
+
+
 
       // calculates the duration of each note
       divider = melody[thisNote + 1];
@@ -186,32 +214,6 @@ void loop() {
 
       // Wait for the specief duration before playing the next note.
 
-
-      // stop the waveform generation before the next note.
-      noTone(buzzer);
-    }
-
-
-  }
-
-  if (cancion == 7) {
-    for (int thisNote2 = 0; thisNote2 < notes2 * 2; thisNote2 = thisNote2 + 2) {
-
-      // calculates the duration of each note
-      divider2 = melody2[thisNote2 + 1];
-      if (divider2 > 0) {
-        // regular note, just proceed
-        noteDuration2 = (wholenote2) / divider2;
-      } else if (divider2 < 0) {
-        // dotted notes are represented with negative durations!!
-        noteDuration2 = (wholenote2) / abs(divider2);
-        noteDuration2 *= 1.5; // increases the duration in half for dotted notes
-      }
-
-      // we only play the note for 90% of the duration, leaving 10% as a pause
-      tone(buzzer, melody2[thisNote2], noteDuration2 * 0.9);
-
-      // Wait for the specief duration before playing the next note.
 
 
       // stop the waveform generation before the next note.
