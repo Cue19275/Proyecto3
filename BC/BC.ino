@@ -97,8 +97,8 @@ int enable_sprites = 0;
 int enable_personajes = 0;
 int cont_personajesp1 = 1;
 int cont_personajesp2 = 1;
-int gano_p1=0;
-int gano_p2=0;
+int gano_p1 = 0;
+int gano_p2 = 0;
 
 uint8_t BO1;
 uint8_t BO2;
@@ -118,6 +118,7 @@ uint8_t fon1;
 uint8_t FLAG;
 uint8_t FLAG2;
 uint8_t FLAG3;
+uint8_t FLAG4;
 uint8_t FLAGO;
 uint8_t FLAGO1;
 uint8_t FLAGO2;
@@ -192,6 +193,8 @@ void setup() {
   pinMode(PC_5, INPUT_PULLUP);
   pinMode(PC_6, INPUT_PULLUP);
   pinMode(PC_7, INPUT_PULLUP);
+  pinMode(PD_6, OUTPUT);
+  pinMode(PD_7, OUTPUT);
 
   if (!SD.begin(PA_3)) {
     Serial.println("initialization failed!");
@@ -271,7 +274,31 @@ void loop() {
     enable_sprites = 1;
   }
 
+  if (FLAG == 1 && FLAG2 == 0 && FLAG3 == 0) {
 
+    digitalWrite (PD_7, HIGH);
+    digitalWrite (PD_6, LOW);
+
+  }
+
+  if (FLAG2 == 1 && FLAG == 0 && FLAG3 == 0) {
+    digitalWrite (PD_6, HIGH);
+    digitalWrite (PD_7, LOW);
+  }
+
+ if (FLAG2 == 0 && FLAG == 0 && FLAG3 == 1) {
+    digitalWrite (PD_6, HIGH);
+    digitalWrite (PD_7, HIGH);
+  }
+
+
+
+
+
+  //***************************************************************************************************************************************
+  // BOTONES
+  //***************************************************************************************************************************************
+  delay(10);
 
 
   //***************************************************************************************************************************************
@@ -293,6 +320,18 @@ void loop() {
   BO11 = digitalRead(PC_7);//ABAJO
   BO12 = digitalRead(PF_2);//DISPARO
   BO13 = digitalRead(PF_3);//AVANZAR
+  if (FLAG4 == 1) {
+    if (BO1 == LOW) {
+      fon = 1;
+    }
+    if (fon == 1 && BO1 == HIGH) {
+      fon = 0;
+      enable_personajes = 0;
+      chara();
+    }
+
+  }
+
   if (FLAG == 1) {
     if (BO1 == LOW) {
       fon = 1;
@@ -316,7 +355,85 @@ void loop() {
     if (FLAGO12 == 1 && BO3 == HIGH) {
       FLAGO12 = 0;
       cont_personajesp1++;
-      
+
+      if (cont_personajesp1 > 3) {
+        cont_personajesp1 = 1;
+      }
+
+    }
+  }
+  //PERSONAJE2 p1
+  if (FLAG == 1) {
+    if (BO4 == LOW) {
+      FLAGO13 = 1;
+    }
+    if (FLAGO13 == 1 && BO4 == HIGH) {
+      FLAGO13 = 0;
+      cont_personajesp1--;
+      if (cont_personajesp1 < 1) {
+        cont_personajesp1 = 3;
+      }
+
+    }
+
+  }
+  //PERSONAJE1 p2
+  if (FLAG == 1) {
+    if (BO9 == LOW) {
+      FLAGO14 = 1;
+    }
+    if (FLAGO14 == 1 && BO9 == HIGH) {
+      FLAGO14 = 0;
+      cont_personajesp2++;
+      if (cont_personajesp2 > 3) {
+        cont_personajesp2 = 1;
+      }
+
+    }
+  }
+  //PERSONAJE2 p3
+  if (FLAG == 1) {
+    if (BO8 == LOW) {
+      FLAGO15 = 1;
+    }
+    if (FLAGO15 == 1 && BO8 == HIGH) {
+      FLAGO15 = 0;
+      cont_personajesp2--;
+      if (cont_personajesp2 < 1) {
+        cont_personajesp2 = 3;
+      }
+
+    }
+
+  }
+
+
+  if (FLAG3 == 1) {
+    if (BO1 == LOW) {
+      fon = 1;
+    }
+    if (fon == 1 && BO1 == HIGH) {
+      fon = 0;
+      FLAG3 = 0;
+      ini();
+    }
+
+  }
+
+
+  //********************************************************************************************
+  //********************************SELECCION DE PERSONAJE***********************************
+  //********************************************************************************************
+  //PERSONAJE1 p1
+  if (FLAG == 1) {
+    if (BO3 == LOW) {
+      FLAGO12 = 1;
+      Serial.println("FaseUno");
+    }
+    if (FLAGO12 == 1 && BO3 == HIGH) {
+      FLAGO12 = 0;
+      cont_personajesp1++;
+
       if (cont_personajesp1 > 3) {
         cont_personajesp1 = 1;
       }
@@ -553,18 +670,6 @@ void loop() {
   //BOTONES P2
   //****************************************************************************************************************
 
-  //PRUEBA
-  //  if (FLAG2 == 1) {
-  //    if (BO7 == LOW) {
-  //      FLAGO6 = 1;
-  //    }
-  //
-  //    if (FLAGO6 == 1 && BO7 == HIGH) { //SOLO ES DE PRUEBA QUITAR DESPUES
-  //      FLAGO6 = 0;
-  //      gameover();
-  //
-  //    }
-  //  }
 
   //AVANZAR P2
   if (FLAG2 == 1) {
@@ -643,19 +748,6 @@ void loop() {
     }
   }
 
-  //   if (FLAG2 == 1) {
-  //    if (BO7 == LOW) {
-  //      FLAGO6 = 1;
-  //    }
-  //
-  //
-  //
-  //    if (FLAGO6 == 1 && BO7 == HIGH) { //SOLO ES DE PRUEBA QUITAR DESPUES
-  //      FLAGO6 = 0;
-  //      gameover();
-  //
-  //    }
-  //  }
   //Para saltar de Game Over a inicio
   if (FLAG3 == 1) {
     if (BO2 == LOW) {
@@ -951,6 +1043,45 @@ void loop() {
 
       x_b2 = x_t2 + 18;
       y_b2 = y_t2 + 4;
+    }
+    else {
+      disparo_activo2 = 0;
+    }
+
+  }
+  //************************Bloque3Disparo********************************
+  else if ((entrada2 == 63 ) && ((flag_orient2 == 2) && (disparo_activo2 == 0))) {
+    entrada2 = 0;
+    disparo_vertU2 = 0;
+    disparo_vertA2 = 0;
+    disparo_horI2 = 1;
+    disparo_horD2 = 0;
+    disparo_activo2 = 1;
+
+    if ((x_t2 - 12) <= x_limsup) {
+      disparo_activo2 = 1;
+
+      x_b2 = x_t2 - 12;
+      y_b2 = y_t2 + 4;
+    }
+    else {
+      disparo_activo2 = 0;
+    }
+    //************************Bloque4Disparo********************************
+  }
+  else if ((entrada2 == 63 ) && ((flag_orient2 == 3) && (disparo_activo2 == 0))) {
+    entrada2 = 0;
+    disparo_vertU2 = 0;
+    disparo_vertA2 = 1;
+    disparo_horI2 = 0;
+    disparo_horD2 = 0;
+    disparo_activo2 = 1;
+
+    if ((y_t2 + 27) <= y_liminf) {
+      disparo_activo2 = 1;
+
+      x_b2 = x_t2 + 4;
+      y_b2 = y_t2 + 18;
     }
     else {
       disparo_activo2 = 0;
@@ -1636,8 +1767,8 @@ void pista(void) {
   con2_ = 0;
   con3_ = 0;
   con4_ = 0;
-  gano_p1=0;
-  gano_p2=0;
+  gano_p1 = 0;
+  gano_p2 = 0;
   enable_sprites = 0;
 
   x_t1 = 80;
@@ -1667,37 +1798,47 @@ void pista(void) {
 
   FLAG = 0;
   FLAG2 = 1;
-  Serial2.println(6, DEC);
-  //delay(10000);
-  // gameover();
 
 
-  /* LCD_Bitmap(30, 10, 17, 15, tanque2_2);
-    LCD_Bitmap(60, 10, 17, 15, tanque2_3);
-    LCD_Bitmap(80, 10, 15, 17, tanque2_4);
-    LCD_Bitmap(97, 10, 10, 8, misil1);*/
-
-  /*
-    for(int x = 0; x <319; x++){
-      LCD_Bitmap(x, 52, 16, 16, tile2);
-      LCD_Bitmap(x, 68, 16, 16, tile);
-
-      LCD_Bitmap(x, 207, 16, 16, tile);
-      LCD_Bitmap(x, 223, 16, 16, tile);
-      x += 15;
-
-    }*/
 }
 
 void ini (void) {
   LCD_Clear(0x00);
   LCD_Bitmap(0, 0, 320, 240, fondo);
+  FLAG = 0;
+  FLAG2 = 0;
+  FLAG3 = 0;
+  FLAG4 = 1;
+}
+
+void chara (void) {
+  LCD_Clear(0x00);
+  FillRect(0, 0, 320, 240, 0x00);
+  enable_personajes = 1;
+  cont_personajesp1 = 1;
+  cont_personajesp2 = 1;
+  String text4 = "ELIGE A UN CUQUE";
+  String text5 = "P1";
+  String text6 = "P2";
+
+  //text, x, y ,tamaño de font, color, background
+  LCD_Print(text4, 40, 40, 2, 0xffff, 0x00);
+  LCD_Print(text5, 70, 80, 1, 0xffff, 0x00);
+  LCD_Print(text6, 240, 80, 1, 0xffff, 0x00);
+
+  LCD_Bitmap(20, 120, 20, 20, flechaizq);
+  LCD_Bitmap(112, 120, 20, 20, flechader);
+
+  LCD_Bitmap(190, 120, 20, 20, flechaizq);
+  LCD_Bitmap(282, 120, 20, 20, flechader);
+
   FLAG = 1;
   FLAG2 = 0;
   FLAG3 = 0;
   enable_personajes = 1;
   cont_personajesp1 = 1;
   cont_personajesp2 = 1;
+  FLAG4 = 0;
 }
 
 
@@ -1715,39 +1856,41 @@ void gameover(void) {
   LCD_Print("-", 160, 40, 1, 0xffff, 0x00);
   LCD_Print(String(record2), 180, 40, 1, 0xffff, 0x00);
   LCD_Print("P2", 200, 40, 1, 0xffff, 0x00);
+  FLAG = 0;
   FLAG2 = 0;
   FLAG3 = 1;
+  FLAG4 = 0;
 
 
 
-if(gano_p1==1){
-  if(cont_personajesp1 == 1){
-    LCD_Print("Solid Snake Wins", 30, 170, 2, 0xffff, 0x00);
-    LCD_Bitmap(134, 70, 52, 89, snake);
+  if (gano_p1 == 1) {
+    if (cont_personajesp1 == 1) {
+      LCD_Print("Solid Snake Wins", 30, 170, 2, 0xffff, 0x00);
+      LCD_Bitmap(134, 70, 52, 89, snake);
+    }
+    else if (cont_personajesp1 == 2) {
+      LCD_Print("Otacon Wins", 75, 170, 2, 0xffff, 0x00);
+      LCD_Bitmap(134, 70, 52, 89, otacon);
+    }
+    else if (cont_personajesp1 == 3) {
+      LCD_Print("Meryl Wins", 80, 170, 2, 0xffff, 0x00);
+      LCD_Bitmap(134, 70, 52, 89, meryl);
+    }
   }
-  else if(cont_personajesp1 == 2){
-    LCD_Print("Otacon Wins", 75, 170, 2, 0xffff, 0x00);
-    LCD_Bitmap(134, 70, 52, 89, otacon);
+  else if (gano_p2 == 1) {
+    if (cont_personajesp2 == 1) {
+      LCD_Print("Liquid Snake Wins", 25, 170, 2, 0xffff, 0x00);
+      LCD_Bitmap(134, 70, 52, 89, liquid);
+    }
+    else if (cont_personajesp2 == 2) {
+      LCD_Print("Sniper Wolf Wins", 30, 170, 2, 0xffff, 0x00);
+      LCD_Bitmap(134, 70, 52, 89, sniper);
+    }
+    else if (cont_personajesp2 == 3) {
+      LCD_Print("Naomi Hunter Wins", 30, 170, 2, 0xffff, 0x00);
+      LCD_Bitmap(134, 70, 52, 89, naomi);
+    }
   }
-  else if(cont_personajesp1 == 3){
-    LCD_Print("Meryl Wins", 80, 170, 2, 0xffff, 0x00);
-    LCD_Bitmap(134, 70, 52, 89, meryl);
-  }
-}
-else if(gano_p2==1){
-  if(cont_personajesp2 == 1){
-    LCD_Print("Liquid Snake Wins", 25, 170, 2, 0xffff, 0x00);
-    LCD_Bitmap(134, 70, 52, 89, liquid);
-  }
-  else if(cont_personajesp2 == 2){
-    LCD_Print("Sniper Wolf Wins", 30, 170, 2, 0xffff, 0x00);
-    LCD_Bitmap(134, 70, 52, 89, sniper);
-  }
-  else if(cont_personajesp2 == 3){
-    LCD_Print("Naomi Hunter Wins", 30, 170, 2, 0xffff, 0x00);
-    LCD_Bitmap(134, 70, 52, 89, naomi);
-  }
-}
   //Borrar archivo y actualizar record
   SD.remove("RECORD.txt");
   myFile = SD.open("RECORD.txt", FILE_WRITE);
@@ -1915,24 +2058,24 @@ int num_ascii(char num) {
   }
 }
 void character_select(int p1, int p2) {
-  if(enable_personajes==1){
-  if (p1 == 1) {
-    LCD_Bitmap(30, 100, 52, 89, snake);
-  }
-  else if (p1 == 2) {
-    LCD_Bitmap(30, 100, 52, 89, otacon);
-  }
-  else if (p1 == 3) {
-    LCD_Bitmap(30, 100, 52, 89, meryl);
-  }
-  if (p2 == 1) {
-    LCD_Bitmap(238, 100, 52, 89, liquid);
-  }
-  else if (p2 == 2) {
-    LCD_Bitmap(238, 100, 52, 89, sniper);
-  }
-  else if (p2 == 3) {
-    LCD_Bitmap(238, 100, 52, 89, naomi);
-  }
+  if (enable_personajes == 1) {
+    if (p1 == 1) {
+      LCD_Bitmap(50, 100, 52, 89, snake);
+    }
+    else if (p1 == 2) {
+      LCD_Bitmap(50, 100, 52, 89, otacon);
+    }
+    else if (p1 == 3) {
+      LCD_Bitmap(50, 100, 52, 89, meryl);
+    }
+    if (p2 == 1) {
+      LCD_Bitmap(220, 100, 52, 89, liquid);
+    }
+    else if (p2 == 2) {
+      LCD_Bitmap(220, 100, 52, 89, sniper);
+    }
+    else if (p2 == 3) {
+      LCD_Bitmap(220, 100, 52, 89, naomi);
+    }
   }
 }
