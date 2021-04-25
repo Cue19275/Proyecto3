@@ -98,6 +98,7 @@ int y;
 // change this to make the song slower or faster
 int tempo = 110;
 int tempo2 = 120;
+int tempo3 = 90;
 
 // change this to whichever pin you want to use
 int buzzer = 22;
@@ -131,18 +132,37 @@ int melody2[] = {
 
 };
 
+int melody3[] = {
+  NOTE_CS5, 10, NOTE_CS6, 10, NOTE_GS5, 10, NOTE_FS5, 10, NOTE_FS6, 10, NOTE_GS5, 10, NOTE_F6, 10, NOTE_GS5, 10,
+  NOTE_CS5, 10, NOTE_CS6, 10, NOTE_GS5, 10, NOTE_FS5, 10, NOTE_FS6, 10, NOTE_GS5, 10, NOTE_F6, 10, NOTE_GS5, 10,
+
+  NOTE_DS5, 10, NOTE_CS6, 10, NOTE_GS5, 10, NOTE_FS5, 10, NOTE_FS6, 10, NOTE_GS5, 10, NOTE_F6, 10, NOTE_GS5, 10,
+  NOTE_DS5, 10, NOTE_CS6, 10, NOTE_GS5, 10, NOTE_FS5, 10, NOTE_FS6, 10, NOTE_GS5, 10, NOTE_F6, 10, NOTE_GS5, 10,
+
+  NOTE_FS5, 10, NOTE_CS6, 10, NOTE_GS5, 10, NOTE_FS5, 10, NOTE_FS6, 10, NOTE_GS5, 10, NOTE_F6, 10, NOTE_GS5, 10,
+  NOTE_FS5, 10, NOTE_CS6, 10, NOTE_GS5, 10, NOTE_FS5, 10, NOTE_FS6, 10, NOTE_GS5, 10, NOTE_F6, 10, NOTE_GS5, 10,
+
+  NOTE_CS5, 10, NOTE_CS6, 10, NOTE_GS5, 10, NOTE_FS5, 10, NOTE_FS6, 10, NOTE_GS5, 10, NOTE_F6, 10, NOTE_GS5, 10,
+  NOTE_CS5, 10, NOTE_CS6, 10, NOTE_GS5, 10, NOTE_FS5, 10, NOTE_FS6, 10, NOTE_GS5, 10, NOTE_F6, 10, NOTE_GS5, 10
+
+};
+
 
 // sizeof gives the number of bytes, each int value is composed of two bytes (16 bits)
 // there are two values per note (pitch and duration), so for each note there are four bytes
 int notes = sizeof(melody) / sizeof(melody[0]) / 2;
 int notes2 = sizeof(melody2) / sizeof(melody2[0]) / 2;
+int notes3 = sizeof(melody3) / sizeof(melody3[0]) / 2;
 
 // this calculates the duration of a whole note in ms
 int wholenote = (60000 * 4) / tempo;
 int wholenote2 = (60000 * 4) / tempo2;
+int wholenote3 = (60000 * 4) / tempo3;
 
 int divider = 0, noteDuration = 0;
 int divider2 = 0, noteDuration2 = 0;
+int divider3 = 0, noteDuration3 = 0;
+
 
 void setup() {
   // put your setup code here, to run once:
@@ -156,14 +176,14 @@ void setup() {
 
 void loop() {
 
-x = digitalRead(2);
-y = digitalRead(4);
-  
+  x = digitalRead(2);
+  y = digitalRead(4);
+
   // put your main code here, to run repeatedly:
 
 
 
-  if (x == HIGH && y ==LOW ) {
+  if (x == HIGH && y == LOW ) {
     for (int thisNote2 = 0; thisNote2 < notes2 * 2; thisNote2 = thisNote2 + 2) {
 
 
@@ -193,7 +213,7 @@ y = digitalRead(4);
 
 
   if (y == HIGH && x == LOW) {
-    Serial.println("Cancion 7");
+    
     for (int thisNote = 0; thisNote < notes * 2; thisNote = thisNote + 2) {
 
 
@@ -219,6 +239,33 @@ y = digitalRead(4);
       // stop the waveform generation before the next note.
       noTone(buzzer);
     }
+  }
+
+
+  if (y == HIGH && x == HIGH) {
+    for (int thisNote3 = 0; thisNote3 < notes3 * 2; thisNote3 = thisNote3 + 2) {
+
+      // calculates the duration of each note
+      divider3 = melody3[thisNote3 + 1];
+      if (divider3 > 0) {
+        // regular note, just proceed
+        noteDuration3 = (wholenote3) / divider3;
+      } else if (divider3 < 0) {
+        // dotted notes are represented with negative durations!!
+        noteDuration3 = (wholenote3) / abs(divider3);
+        noteDuration3 *= 1.5; // increases the duration in half for dotted notes
+      }
+
+      // we only play the note for 90% of the duration, leaving 10% as a pause
+      tone(buzzer, melody3[thisNote3], noteDuration3 * 0.9);
+
+      // Wait for the specief duration before playing the next note.
+
+
+      // stop the waveform generation before the next note.
+      noTone(buzzer);
+    }
+
   }
 
 }
