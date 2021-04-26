@@ -494,7 +494,7 @@ void loop() {
     LCD_Sprite(30, 30, 17, 17, explo, 6, x, 0, 0);*/
 
   //****************************************************************************************
-  //*Detección HIT
+  //*Detección HIT Este bloque evalúa que hacer en caso se haua hecho un hit por parte de p1 y luego p2 respectivamente
   //***********************************************************************************
   if (hit1 == 1) {
     hit1 = 0;
@@ -594,7 +594,7 @@ void loop() {
     }
   }
   //****************************************************************************************
-  //*Movimiento
+  //*Movimiento Bloques que actuan banderas de orientacion y acciones (movimiento disparo para p1
   //***********************************************************************************
   if (FLAG2 == 1) {
     if (BO1 == LOW) {
@@ -667,7 +667,7 @@ void loop() {
   }
 
   //****************************************************************************************************************
-  //BOTONES P2
+  //BOTONES P2 Bloques que actuan banderas de orientacion y acciones (movimiento disparo) para p2
   //****************************************************************************************************************
 
 
@@ -763,7 +763,7 @@ void loop() {
   //*****************************Matrices de espacio ocupado*********************************
   ploteo(x_t1, y_t1, x_t2, y_t2, flag_orient);
 
-  //***********************Movimiento***************************************
+  //***********************MovimientoSeccion que abarca los algoritmos y limites de como se deben de comportar los tanques
   //************************Bloque1Movimiento********************************
   if (entrada == 48 && flag_orient == 0 && con3 == 0) {
     entrada = 0;
@@ -816,7 +816,7 @@ void loop() {
       LCD_Bitmap(x_t1, y_t1, 15, 17, tanque2_4);
     }
   }
-  //***********************CambiosDeDireccion***************************************
+  //***********************CambiosDeDireccion Bloques que describen cuando los tanques deben de cambiar de orientacion
   //************************Bloque1Direccion********************************
   else if (entrada == 49) {
     entrada = 0;
@@ -845,6 +845,7 @@ void loop() {
     LCD_Bitmap(x_t1, y_t1, 15, 17, tanque2_4);
     flag_orient = 3;
   }
+  //Los siguientes bloques describen en en que momento se puede habilitar la accion de disparar de los tanques e indicar que actualmente hay un disparo en activo o no
   //************************Bloque1Disparo********************************
   if ((entrada == 53 ) && ((flag_orient == 0) && (disparo_activo == 0))) {
     entrada = 0;
@@ -1131,7 +1132,8 @@ void loop() {
   if (enable_sprites == 1) {
 
     enable_sprites = 0;
-    //------->Avance Disparo
+    //Dentro de este if solo se entra cuando el conte de tiempo lo habilita, por lo que las animaciones solo ocurren cada 100ms
+    //Aqí se describe como se actualiza el sprite del disparo y eventualmente donde debe de estar limitado el alcance de este
     //************************Bloque1AvanceDisparo********************************
     if ((disparo_activo == 1) && (disparo_vertU == 1)) {
       FillRect(x_b1, y_b1, 8, 10, 0);
