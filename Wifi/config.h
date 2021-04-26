@@ -1,11 +1,9 @@
+/************************ Adafruit IO Config *******************************/
+
 // visit io.adafruit.com if you need to create an account,
 // or if you need your Adafruit IO key.
 #define IO_USERNAME  "kyos"
-#define IO_KEY       "aio_xmCz13jI9TYx3wLDFUyg438Z50jc"
-=======
-#define IO_KEY      "aio_BTXb263uu5VVBgIhOKG955GSy2dv"
->>>>>>> main
-
+#define IO_KEY       "aio_WWKd64PONGERBfVWMhHv1OsR33ba"
 /******************************* WIFI **************************************/
 
 // the AdafruitIO_WiFi client will work with the following boards:
@@ -21,8 +19,8 @@
 //   - Adafruit AirLift Shield -> https://www.adafruit.com/product/4285
 //   - Adafruit AirLift FeatherWing -> https://www.adafruit.com/product/4264
 
-#define WIFI_SSID "CLARO1_130838"
-#define WIFI_PASS "664fZCnapc"
+#define WIFI_SSID "Cuellar"
+#define WIFI_PASS "56328089"
 
 // uncomment the following line if you are using airlift
 // #define USE_AIRLIFT

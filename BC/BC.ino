@@ -212,7 +212,7 @@ void setup() {
   Serial.println("Inicio");
 
   //INTRO DEL JUEGO
-  
+
   LCD_Init();
   LCD_Clear(0x00);
   //x1,y1,x2,y2
@@ -224,7 +224,7 @@ void setup() {
   //text, x, y ,tamaño de font, color, background
   LCD_Print(text1, 0, 100, 2, 0xffff, 0x00);
   LCD_Print(text2, 0, 120, 2, 0xffff, 0x00);
-  LCD_Print(text3, 0, 140, 2, 0xffff, 0x00);  //SE COLOCAN LOS TEXTOS CON 
+  LCD_Print(text3, 0, 140, 2, 0xffff, 0x00);  //SE COLOCAN LOS TEXTOS CON
   delay (1000);
 
   LCD_Clear(0x00);
@@ -290,7 +290,7 @@ void loop() {
   if (FLAG == 1 && FLAG2 == 0 && FLAG3 == 0) { //SI ESTA EN LA PANTALLA DE INICIO SUENA LA CANCION DE BLACK SABBATH
 
     digitalWrite (PD_7, HIGH);
-    digitalWrite (PD_6, LOW); //TOGGLE DE PINES, ESTO SE HACE PARA ENCENDER Y APAGAR PINES CONECTADOS A UN ARDUINO 
+    digitalWrite (PD_6, LOW); //TOGGLE DE PINES, ESTO SE HACE PARA ENCENDER Y APAGAR PINES CONECTADOS A UN ARDUINO
 
   }
 
@@ -312,7 +312,7 @@ void loop() {
   // BOTONES
   //***************************************************************************************************************************************
   delay(10);
-  
+
   //BOTONES P1
   BO1 = digitalRead(PA_7); //AVANZAR
   BO2 = digitalRead(PA_6); //ARRIBA
@@ -321,7 +321,7 @@ void loop() {
   BO5 = digitalRead(PE_5); //ABAJO
   BO6 = digitalRead(PE_3); //DISPARO
   //BO7 = digitalRead(PF_3);
-  
+
   // BOTONES P2
   BO8 = digitalRead(PC_4);//IZQUIERDA
   BO9 = digitalRead(PC_5);//DERECHA
@@ -329,9 +329,9 @@ void loop() {
   BO11 = digitalRead(PC_7);//ABAJO
   BO12 = digitalRead(PF_2);//DISPARO
   BO13 = digitalRead(PF_3);//AVANZAR
-  
+
   //HABILITAR BOTONES
-  
+
   if (FLAG4 == 1) {  //SEGUN LA BANDERA ACTIVA, VA A SER EL FUNCIONAMIENTO DE LOS BOTONES
     if (BO1 == LOW) { //EN ESTE CASO LA BANDERA ACTIVA ES PARA EL CHARACTER SELECT
       fon = 1;
@@ -355,6 +355,70 @@ void loop() {
     }
 
   }
+  //********************************************************************************************
+  //********************************SELECCION DE PERSONAJE***********************************
+  //********************************************************************************************
+  //PERSONAJE1 p1
+  if (FLAG == 1) {
+    if (BO3 == LOW) {
+      FLAGO12 = 1;
+      Serial.println("FaseUno");
+    }
+    if (FLAGO12 == 1 && BO3 == HIGH) {
+      FLAGO12 = 0;
+      cont_personajesp1++;
+
+      if (cont_personajesp1 > 3) {
+        cont_personajesp1 = 1;
+      }
+
+    }
+  }
+  //PERSONAJE2 p1
+  if (FLAG == 1) {
+    if (BO4 == LOW) {
+      FLAGO13 = 1;
+    }
+    if (FLAGO13 == 1 && BO4 == HIGH) {
+      FLAGO13 = 0;
+      cont_personajesp1--;
+      if (cont_personajesp1 < 1) {
+        cont_personajesp1 = 3;
+      }
+
+    }
+
+  }
+  //PERSONAJE1 p2
+  if (FLAG == 1) {
+    if (BO9 == LOW) {
+      FLAGO14 = 1;
+    }
+    if (FLAGO14 == 1 && BO9 == HIGH) {
+      FLAGO14 = 0;
+      cont_personajesp2++;
+      if (cont_personajesp2 > 3) {
+        cont_personajesp2 = 1;
+      }
+
+    }
+  }
+  //PERSONAJE2 p3
+  if (FLAG == 1) {
+    if (BO8 == LOW) {
+      FLAGO15 = 1;
+    }
+    if (FLAGO15 == 1 && BO8 == HIGH) {
+      FLAGO15 = 0;
+      cont_personajesp2--;
+      if (cont_personajesp2 < 1) {
+        cont_personajesp2 = 3;
+      }
+
+    }
+
+  }
+
 
   if (FLAG3 == 1) {
     if (BO1 == LOW) { //EN ESTE CASO LA BANDERA ACTIVA ES PARA EL GAME OVER
@@ -372,7 +436,7 @@ void loop() {
   //********************************************************************************************
   //********************************SELECCION DE PERSONAJE***********************************
   //********************************************************************************************
-  
+
   //PERSONAJE1 p1
   if (FLAG == 1) {
     if (BO3 == LOW) {
@@ -465,8 +529,8 @@ void loop() {
         record1 = 1;
         record2 = 0;
       }
-      gano_p1 = 1;
-      gano_p2 = 0;
+      gano_p1=1;
+      gano_p2=0;
       gameover();
     }
     else if (life2 == 2) {
@@ -513,8 +577,8 @@ void loop() {
         record1 = 0;
         record2 = 1;
       }
-      gano_p2 = 1;
-      gano_p1 = 0;
+      gano_p2=1;
+      gano_p1=0;
       gameover();
     }
     else if (life1 == 2) {
@@ -552,8 +616,8 @@ void loop() {
   //BOTONES P1
   //****************************************************************************************************************
 
-  
-  if (FLAG2 == 1) { 
+
+  if (FLAG2 == 1) {
     if (BO1 == LOW) {
       FLAGO = 1;
     }
@@ -585,7 +649,7 @@ void loop() {
     if (FLAGO2 == 1 && BO3 == HIGH) {
       FLAGO2 = 0;
       entrada = 50;    //DERECHA
- 
+
     }
   }
 
@@ -1000,6 +1064,45 @@ void loop() {
 
       x_b2 = x_t2 + 18;
       y_b2 = y_t2 + 4;
+    }
+    else {
+      disparo_activo2 = 0;
+    }
+
+  }
+  //************************Bloque3Disparo********************************
+  else if ((entrada2 == 63 ) && ((flag_orient2 == 2) && (disparo_activo2 == 0))) {
+    entrada2 = 0;
+    disparo_vertU2 = 0;
+    disparo_vertA2 = 0;
+    disparo_horI2 = 1;
+    disparo_horD2 = 0;
+    disparo_activo2 = 1;
+
+    if ((x_t2 - 12) <= x_limsup) {
+      disparo_activo2 = 1;
+
+      x_b2 = x_t2 - 12;
+      y_b2 = y_t2 + 4;
+    }
+    else {
+      disparo_activo2 = 0;
+    }
+    //************************Bloque4Disparo********************************
+  }
+  else if ((entrada2 == 63 ) && ((flag_orient2 == 3) && (disparo_activo2 == 0))) {
+    entrada2 = 0;
+    disparo_vertU2 = 0;
+    disparo_vertA2 = 1;
+    disparo_horI2 = 0;
+    disparo_horD2 = 0;
+    disparo_activo2 = 1;
+
+    if ((y_t2 + 27) <= y_liminf) {
+      disparo_activo2 = 1;
+
+      x_b2 = x_t2 + 4;
+      y_b2 = y_t2 + 18;
     }
     else {
       disparo_activo2 = 0;
@@ -1791,7 +1894,7 @@ void gameover(void) {
 
 
 
-//FUNCIONES PARA MOSTRAR AL GANADOR 
+//FUNCIONES PARA MOSTRAR AL GANADOR
 
   if (gano_p1 == 1) {
     if (cont_personajesp1 == 1) {
@@ -1904,7 +2007,7 @@ void ploteo(int origenx, int origeny, int origenx2, int origeny2, int dir) {
   int maty[17];
 
 
-//ESTO EVITA QUE LOS TANQUES SE TRASPASEN 
+//ESTO EVITA QUE LOS TANQUES SE TRASPASEN
 
   if (dir == 1) {
     if ((((origeny + 17) > origeny2) && ((origeny) < (origeny2 + 17))) && (((origenx + 22) > origenx2) && ((origenx + 22) < (origenx2 + 17)))) {
