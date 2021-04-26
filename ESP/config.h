@@ -1,12 +1,10 @@
 // visit io.adafruit.com if you need to create an account,
 // or if you need your Adafruit IO key.
-<<<<<<< Updated upstream:ESP/config.h
-#define IO_USERNAME  "mon19379"
-#define IO_KEY      "aio_paPI84gh1UC1zK7i6B5echlkDah7"
-=======
 #define IO_USERNAME  "kyos"
 #define IO_KEY       "aio_xmCz13jI9TYx3wLDFUyg438Z50jc"
->>>>>>> Stashed changes:Wifi/config.h
+=======
+#define IO_KEY      "aio_BTXb263uu5VVBgIhOKG955GSy2dv"
+>>>>>>> main
 
 /******************************* WIFI **************************************/
 
