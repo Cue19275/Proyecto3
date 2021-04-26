@@ -26,6 +26,9 @@
 int DPINS[] = {PB_0, PB_1, PB_2, PB_3, PB_4, PB_5, PB_6, PB_7};
 File myFile;
 File root;
+//***********************************************************************************************************************************************************************************
+//VARIABLES
+//***********************************************************************************************************************************************************************************
 int entrada;
 int entrada2;
 int x_t1;
@@ -106,7 +109,6 @@ uint8_t BO3;
 uint8_t BO4;
 uint8_t BO5;
 uint8_t BO6;
-uint8_t BO7; //SOLO ES DE PRUEBA QUITAR DESPUES
 uint8_t BO8;
 uint8_t BO9;
 uint8_t BO10;
@@ -143,9 +145,11 @@ extern uint8_t meryl[];
 extern uint8_t liquid[];
 extern uint8_t naomi[];
 extern uint8_t sniper[];
-//***************************************************************************************************************************************
-// Functions Prototypes
-//***************************************************************************************************************************************
+
+
+//************************************************************************************************************************************************************************************
+// PROTOTIPOS DE FUNCION
+//*************************************************************************************************************************************************************************************
 void LCD_Init(void);
 void LCD_CMD(uint8_t cmd);
 void LCD_DATA(uint8_t data);
@@ -177,9 +181,10 @@ void setup() {
   SysCtlClockSet(SYSCTL_SYSDIV_2_5 | SYSCTL_USE_PLL | SYSCTL_OSC_MAIN | SYSCTL_XTAL_16MHZ);
   Serial.begin(9600);
   SPI.setModule(0);
-
   GPIOPadConfigSet(GPIO_PORTB_BASE, 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7, GPIO_STRENGTH_8MA, GPIO_PIN_TYPE_STD_WPU);
   Serial2.begin(9600);
+
+  //ENTRADAS Y SALIDAS
   pinMode(PA_3, OUTPUT);
   pinMode(PF_4, INPUT_PULLUP);
   pinMode(PA_6, INPUT_PULLUP);
@@ -196,6 +201,7 @@ void setup() {
   pinMode(PD_6, OUTPUT);
   pinMode(PD_7, OUTPUT);
 
+//INICIALIZACION DE TARJETA SD
   if (!SD.begin(PA_3)) {
     Serial.println("initialization failed!");
     return;
@@ -204,6 +210,9 @@ void setup() {
 
 
   Serial.println("Inicio");
+
+  //INTRO DEL JUEGO
+  
   LCD_Init();
   LCD_Clear(0x00);
   //x1,y1,x2,y2
@@ -215,8 +224,8 @@ void setup() {
   //text, x, y ,tamaño de font, color, background
   LCD_Print(text1, 0, 100, 2, 0xffff, 0x00);
   LCD_Print(text2, 0, 120, 2, 0xffff, 0x00);
-  LCD_Print(text3, 0, 140, 2, 0xffff, 0x00);
-  delay (100);
+  LCD_Print(text3, 0, 140, 2, 0xffff, 0x00);  //SE COLOCAN LOS TEXTOS CON 
+  delay (1000);
 
   LCD_Clear(0x00);
 
@@ -224,7 +233,7 @@ void setup() {
   //text, x, y ,tamaño de font, color, background
   LCD_Print(text4, 100, 100, 2, 0xffff, 0x00);
   delay (3000);
-  ini();
+  ini();  //AL TERMINAR LA INTRO, SE VA A LA PANTALLA DE INICIO
 
 
 
@@ -237,6 +246,8 @@ void setup() {
   //LCD_Sprite(int x, int y, int width, int height, unsigned char bitmap[],int columns, int index, char flip, char offset);
 
   //LCD_Bitmap(unsigned int x, unsigned int y, unsigned int width, unsigned int height, unsigned char bitmap[]);
+
+  //VALORES INICIALES
   x_t1 = 80;
   y_t1 = 100;
   x_t2 = 160;
@@ -274,19 +285,21 @@ void loop() {
     enable_sprites = 1;
   }
 
-  if (FLAG == 1 && FLAG2 == 0 && FLAG3 == 0) {
+//TOGGLE PARA LA MUSICA
+
+  if (FLAG == 1 && FLAG2 == 0 && FLAG3 == 0) { //SI ESTA EN LA PANTALLA DE INICIO SUENA LA CANCION DE BLACK SABBATH
 
     digitalWrite (PD_7, HIGH);
-    digitalWrite (PD_6, LOW);
+    digitalWrite (PD_6, LOW); //TOGGLE DE PINES, ESTO SE HACE PARA ENCENDER Y APAGAR PINES CONECTADOS A UN ARDUINO 
 
   }
 
-  if (FLAG2 == 1 && FLAG == 0 && FLAG3 == 0) {
+  if (FLAG2 == 1 && FLAG == 0 && FLAG3 == 0) { // SI ESTA EN EL MODO DE JUEGO SUENA LA CANCION DE ROCKY
     digitalWrite (PD_6, HIGH);
     digitalWrite (PD_7, LOW);
   }
- 
- if (FLAG2 == 0 && FLAG == 0 && FLAG3 == 1) {
+
+  if (FLAG2 == 0 && FLAG == 0 && FLAG3 == 1) { //SI ESTA EN LA PANTALLA DE GAME OVER SUENA LA CANCION DE SWEET CHILD O'MINE
     digitalWrite (PD_6, HIGH);
     digitalWrite (PD_7, HIGH);
   }
@@ -299,23 +312,28 @@ void loop() {
   // BOTONES
   //***************************************************************************************************************************************
   delay(10);
-
-  BO1 = digitalRead(PA_7);
-  BO2 = digitalRead(PA_6);
-  BO3 = digitalRead(PF_4);
-  BO4 = digitalRead(PF_1);
-  BO5 = digitalRead(PE_5);
-  BO6 = digitalRead(PE_3);
+  
+  //BOTONES P1
+  BO1 = digitalRead(PA_7); //AVANZAR
+  BO2 = digitalRead(PA_6); //ARRIBA
+  BO3 = digitalRead(PF_4); //DERECHA
+  BO4 = digitalRead(PF_1); //IZQUIERDA
+  BO5 = digitalRead(PE_5); //ABAJO
+  BO6 = digitalRead(PE_3); //DISPARO
   //BO7 = digitalRead(PF_3);
-  //P2
+  
+  // BOTONES P2
   BO8 = digitalRead(PC_4);//IZQUIERDA
   BO9 = digitalRead(PC_5);//DERECHA
   BO10 = digitalRead(PC_6);//ARRIBA
   BO11 = digitalRead(PC_7);//ABAJO
   BO12 = digitalRead(PF_2);//DISPARO
   BO13 = digitalRead(PF_3);//AVANZAR
-  if (FLAG4 == 1) {
-    if (BO1 == LOW) {
+  
+  //HABILITAR BOTONES
+  
+  if (FLAG4 == 1) {  //SEGUN LA BANDERA ACTIVA, VA A SER EL FUNCIONAMIENTO DE LOS BOTONES
+    if (BO1 == LOW) { //EN ESTE CASO LA BANDERA ACTIVA ES PARA EL CHARACTER SELECT
       fon = 1;
     }
     if (fon == 1 && BO1 == HIGH) {
@@ -327,7 +345,7 @@ void loop() {
   }
 
   if (FLAG == 1) {
-    if (BO1 == LOW) {
+    if (BO1 == LOW) { //EN ESTE CASO LA BANDERA ACTIVA ES PARA EL MODO DE JUEGO
       fon = 1;
     }
     if (fon == 1 && BO1 == HIGH) {
@@ -339,7 +357,7 @@ void loop() {
   }
 
   if (FLAG3 == 1) {
-    if (BO1 == LOW) {
+    if (BO1 == LOW) { //EN ESTE CASO LA BANDERA ACTIVA ES PARA EL GAME OVER
       fon = 1;
     }
     if (fon == 1 && BO1 == HIGH) {
@@ -350,10 +368,11 @@ void loop() {
 
   }
 
-  
+
   //********************************************************************************************
   //********************************SELECCION DE PERSONAJE***********************************
   //********************************************************************************************
+  
   //PERSONAJE1 p1
   if (FLAG == 1) {
     if (BO3 == LOW) {
@@ -523,17 +542,25 @@ void loop() {
       }
     }
   }
-  //****************************************************************************************
+  //****************************************************************************************************************************************
   //*Movimiento
-  //***********************************************************************************
-  if (FLAG2 == 1) {
+  //*****************************************************************************************************************************************
+
+ //EN CADA BLOQUE SE UTILIZA UN ANTIRREBOTE PARA ASIGNARLE UN VALOR A UNA VARIABLE Y SEGUN ESE VALOR VA A SER LA ACCION DEL TANQUE
+
+ //****************************************************************************************************************
+  //BOTONES P1
+  //****************************************************************************************************************
+
+  
+  if (FLAG2 == 1) { 
     if (BO1 == LOW) {
       FLAGO = 1;
     }
 
     if (FLAGO == 1 && BO1 == HIGH) {
       FLAGO = 0;
-      entrada = 48;
+      entrada = 48;         //AVANZAR
 
     }
   }
@@ -545,7 +572,7 @@ void loop() {
 
     if (FLAGO1 == 1 && BO2 == HIGH) {
       FLAGO1 = 0;
-      entrada = 49;
+      entrada = 49;      //ARRIBA
 
     }
   }
@@ -557,8 +584,8 @@ void loop() {
 
     if (FLAGO2 == 1 && BO3 == HIGH) {
       FLAGO2 = 0;
-      entrada = 50;
-
+      entrada = 50;    //DERECHA
+ 
     }
   }
 
@@ -569,7 +596,7 @@ void loop() {
 
     if (FLAGO3 == 1 && BO4 == HIGH) {
       FLAGO3 = 0;
-      entrada = 51;
+      entrada = 51;  //IZQUIERDA
 
     }
   }
@@ -579,7 +606,7 @@ void loop() {
     }
     if (FLAGO4 == 1 && BO5 == HIGH) {
       FLAGO4 = 0;
-      entrada = 52;
+      entrada = 52;   //ABAJO
 
     }
   }
@@ -591,7 +618,7 @@ void loop() {
 
     if (FLAGO5 == 1 && BO6 == HIGH) {
       FLAGO5 = 0;
-      entrada = 53;
+      entrada = 53;   //DISPARO
 
     }
   }
@@ -609,7 +636,7 @@ void loop() {
 
     if (FLAGO6 == 1 && BO13 == HIGH) {
       FLAGO6 = 0;
-      entrada2 = 58;
+      entrada2 = 58;  //AVANZAR
     }
   }
 
@@ -621,7 +648,7 @@ void loop() {
 
     if (FLAGO7 == 1 && BO10 == HIGH) {
       FLAGO7 = 0;
-      entrada2 = 59;
+      entrada2 = 59; //ARRIBA
 
     }
   }
@@ -635,7 +662,7 @@ void loop() {
 
     if (FLAGO8 == 1 && BO9 == HIGH) {
       FLAGO8 = 0;
-      entrada2 = 60;
+      entrada2 = 60;  //DERECHA
 
     }
   }
@@ -648,7 +675,7 @@ void loop() {
 
     if (FLAGO9 == 1 && BO8 == HIGH) {
       FLAGO9 = 0;
-      entrada2 = 61;
+      entrada2 = 61;  //IZQUIERDA
 
     }
   }
@@ -660,7 +687,7 @@ void loop() {
     }
     if (FLAGO10 == 1 && BO11 == HIGH) {
       FLAGO10 = 0;
-      entrada2 = 62;
+      entrada2 = 62;  //ABAJO
 
     }
   }
@@ -1514,9 +1541,10 @@ void LCD_Sprite(int x, int y, int width, int height, unsigned char bitmap[], int
 }
 
 //***************************************************************************************************************************************
-// SUBRUTINAS
+// FUNCIONES
 //***************************************************************************************************************************************
 
+///FUNCION PARA EL STAGE
 
 void pista(void) {
   int k = 0;
@@ -1560,10 +1588,11 @@ void pista(void) {
   Serial.println(record2);
 
 
-
+  //TRANSICION
   LCD_Clear(0x00);
   FillRect(0, 0, 320, 240, 0x00);
 
+  //INDICADORES DE VIDA
   String text5 = "P1";
   String text6 = "P2";
   LCD_Bitmap(65, 4, 83, 8, lifeb1);
@@ -1572,7 +1601,7 @@ void pista(void) {
   LCD_Bitmap(197, 4, 83, 8, lifeb1);
 
 
-
+//STAGE
 
   //fila de abajo
   LCD_Bitmap(0, 224, 16, 16, tile);
@@ -1649,6 +1678,8 @@ void pista(void) {
   LCD_Bitmap(304, 192, 16, 16, tile);
   LCD_Bitmap(304, 208, 16, 16, tile);
 
+
+  //VARIABLES PARA LAS MECANICAS DE LOS OBJETOS
   con1 = 0;
   con2 = 0;
   con3 = 0;
@@ -1684,30 +1715,39 @@ void pista(void) {
   life2 = 3;
   end_game = 0;
 
+//TANQUES
   LCD_Bitmap(x_t1, y_t1, 15, 17, tanque2_1);
   LCD_Bitmap(x_t2, y_t2, 15, 17, tanque1_1);
 
+  //BANDERAS PARA EL TOGGLE DE LOS BOTONES, ACCIONES Y MUSICA
   FLAG = 0;
   FLAG2 = 1;
 
 
 }
 
+//FUNCION PARA MOSTRAR PANTALLA PRINCIPAL
 void ini (void) {
   LCD_Clear(0x00);
   LCD_Bitmap(0, 0, 320, 240, fondo);
   FLAG = 0;
   FLAG2 = 0;
   FLAG3 = 0;
-  FLAG4 = 1;
+  FLAG4 = 1; //TOGGLE DE BANDERAS
 }
 
+
+//FUNCION PARA EL MOSTRAR EL CHARACTER SELECT
 void chara (void) {
   LCD_Clear(0x00);
   FillRect(0, 0, 320, 240, 0x00);
+
+  //ENABLLE DE LAS MECANICAS PARA SELECCIONAR PERSONAJE
   enable_personajes = 1;
   cont_personajesp1 = 1;
   cont_personajesp2 = 1;
+
+  //DETALLES VISUALES
   String text4 = "ELIGE A UN CUQUE";
   String text5 = "P1";
   String text6 = "P2";
@@ -1716,7 +1756,7 @@ void chara (void) {
   LCD_Print(text4, 40, 40, 2, 0xffff, 0x00);
   LCD_Print(text5, 70, 80, 1, 0xffff, 0x00);
   LCD_Print(text6, 240, 80, 1, 0xffff, 0x00);
-  
+
   LCD_Bitmap(20, 120, 20, 20, flechaizq);
   LCD_Bitmap(112, 120, 20, 20, flechader);
 
@@ -1726,10 +1766,10 @@ void chara (void) {
   FLAG = 1;
   FLAG2 = 0;
   FLAG3 = 0;
-  FLAG4 = 0;
+  FLAG4 = 0; //TOGGLE DE BANDERAS
 }
 
-
+//FUNCION PARA MOSTRAR LA PANTALLA DE GAME OVER
 void gameover(void) {
   LCD_Clear(0x00);
   Serial.println("BUG");
@@ -1747,9 +1787,11 @@ void gameover(void) {
   FLAG = 0;
   FLAG2 = 0;
   FLAG3 = 1;
-  FLAG4 = 0;
+  FLAG4 = 0;  //TOGGLE DE BANDERAS
 
 
+
+//FUNCIONES PARA MOSTRAR AL GANADOR 
 
   if (gano_p1 == 1) {
     if (cont_personajesp1 == 1) {
@@ -1794,6 +1836,8 @@ void gameover(void) {
 }
 
 //*****************************Matrices de espacio ocupado*********************************
+
+
 void ploteo2(int origenx, int origeny, int origenx2, int origeny2, int dir) {
 
   int origenx_k = origenx + 17;
@@ -1845,6 +1889,7 @@ void ploteo2(int origenx, int origeny, int origenx2, int origeny2, int dir) {
 
 }
 
+//FUNCION PARA LIMITA MOVIMIENTO DE LOS TANQUES
 void ploteo(int origenx, int origeny, int origenx2, int origeny2, int dir) {
 
   int origenx_k = origenx + 17;
@@ -1859,6 +1904,7 @@ void ploteo(int origenx, int origeny, int origenx2, int origeny2, int dir) {
   int maty[17];
 
 
+//ESTO EVITA QUE LOS TANQUES SE TRASPASEN 
 
   if (dir == 1) {
     if ((((origeny + 17) > origeny2) && ((origeny) < (origeny2 + 17))) && (((origenx + 22) > origenx2) && ((origenx + 22) < (origenx2 + 17)))) {
@@ -1899,6 +1945,8 @@ void ploteo(int origenx, int origeny, int origenx2, int origeny2, int dir) {
   }
 
 }
+
+//TABLA ASCII PARA TRADUCIR LA INFORMACION DE LA SD
 
 int num_ascii(char num) {
 
@@ -1945,6 +1993,8 @@ int num_ascii(char num) {
       break;
   }
 }
+
+//FUNCION PARA EL CHARACTER SELECT
 void character_select(int p1, int p2) {
   if (enable_personajes == 1) {
     if (p1 == 1) {
