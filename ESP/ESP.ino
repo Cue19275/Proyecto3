@@ -11,14 +11,6 @@ int Bot3 = 0;
 int Bot4 = 0;
 int Bot5 = 0;
 int Bot6 = 0;
-int flag;
-int flag2;
-int flag3;
-int flag4;
-int flag5;
-int flag6;
-
-
 
 
 
@@ -28,12 +20,6 @@ AdafruitIO_Feed *LEFT = io.feed("LEFT");
 AdafruitIO_Feed *RIGHT = io.feed("RIGHT");
 AdafruitIO_Feed *FWT = io.feed("FWT");
 AdafruitIO_Feed *SHOOT = io.feed("SHOOT");
-
-
-
-
-
-
 
 void setup() {
   // put your setup code here, to run once:
@@ -71,11 +57,9 @@ void setup() {
 
 
 
-
-
 void loop() {
   io.run();
-  
+
 
 
 }
@@ -83,13 +67,12 @@ void loop() {
 
 void handleMessage(AdafruitIO_Data * data) {
   Bot1 = data->toInt();
-  if (Bot1 == 0) {
-  
+  if (Bot1 == 1) {
     digitalWrite(5, HIGH);
-     Serial.println("UP");
+    Serial.println("UP");
   }
   else {
-  
+
     digitalWrite(5, LOW);
   }
 }
@@ -98,25 +81,22 @@ void handleMessage(AdafruitIO_Data * data) {
 void handleMessage2(AdafruitIO_Data * data) {
   Bot2 = data->toInt();
   if (Bot2 == 1) {
-
     digitalWrite(15, HIGH);
     Serial.println("DOWN");
   }
   else {
-
-     digitalWrite(15, LOW);
+   digitalWrite(15, LOW);
   }
 }
 
 void handleMessage3(AdafruitIO_Data * data) {
   Bot3 = data->toInt();
   if (Bot3 == 1) {
- 
-     digitalWrite(18, HIGH);
+    digitalWrite(18, HIGH);
     Serial.println("IZQ");
   }
   else {
-  
+
      digitalWrite(18, LOW);
   }
 }
@@ -125,8 +105,7 @@ void handleMessage3(AdafruitIO_Data * data) {
 void handleMessage4(AdafruitIO_Data * data) {
   Bot4 = data->toInt();
   if (Bot4 == 1) {
-
-     digitalWrite(19, HIGH);
+    digitalWrite(19, HIGH);
     Serial.println("DER");
   }
   else {
@@ -138,7 +117,6 @@ void handleMessage4(AdafruitIO_Data * data) {
 void handleMessage5(AdafruitIO_Data * data) {
   Bot5 = data->toInt();
   if (Bot5 == 1) {
-    
     digitalWrite(21, HIGH);
     Serial.println("AVA");
   }
@@ -151,12 +129,12 @@ void handleMessage5(AdafruitIO_Data * data) {
 void handleMessage6(AdafruitIO_Data * data) {
   Bot6 = data->toInt();
   if (Bot6 == 1) {
-  
+
     digitalWrite(23, HIGH);
     Serial.println("DISP");
   }
   else {
-   
+
     digitalWrite(23, LOW);
   }
 }
